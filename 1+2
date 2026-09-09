@@ -1,0 +1,5 @@
+
+> 1+2
+uv run python 
+> uv run python 
+uv python install 3.14
