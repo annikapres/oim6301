@@ -49,6 +49,32 @@ def _():
     return (mo,)
 
 
+@app.cell
+def _(mo):
+    mo.md("""
+    # Welcome to your first marimo notebook! 🎉
+    """)
+    return
+
+
+@app.cell
+def _():
+    print("This is another cell!")
+    return
+
+
+@app.cell
+def _():
+    1+3
+    return
+
+
+@app.cell
+def _():
+    print('hello world')
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -100,6 +126,12 @@ def _():
     return (freight_charges,)
 
 
+@app.cell
+def _(freight_charges):
+    print(freight_charges)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -118,6 +150,31 @@ def _(mo):
     *The number in brackets is an **index**, and Python counts from zero, so
     `freight_charges[0]` is the first one.*
     """)
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[0]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[4]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    len(freight_charges)
+    return
+
+
+@app.cell
+def _(freight_charges):
+    total=sum(freight_charges)
+    total
     return
 
 
@@ -206,6 +263,57 @@ def _(mo):
     return
 
 
+@app.cell
+def _(freight_charges):
+    freight_charges[-1]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[:3]
+    return
+
+
+@app.cell
+def _(orders):
+    orders[0]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[0]
+    return
+
+
+@app.cell
+def _():
+    category = "Confections"
+    len(category)
+    return
+
+
+@app.cell
+def _(orders):
+    sum(orders)
+    return
+
+
+@app.cell
+def _(freight_charges, orders):
+    orders*2 
+    orders+freight_charges
+    return
+
+
+@app.cell
+def _(freight_charges):
+    sorted(freight_charges)
+    sorted(freight_charges, reverse=True)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -220,6 +328,11 @@ def _(mo):
 @app.cell
 def _(freight_charges, orders):
     [type(freight_charges[0]), type(orders[0]), type("Confections"), type(freight_charges[0] > 20)]
+    return
+
+
+@app.cell
+def _():
     return
 
 
@@ -243,6 +356,24 @@ def _(mo):
     1. `"16.75" + "22.25"`
     2. `16.75 + "22.25"`
     """)
+    return
+
+
+@app.cell
+def _():
+    "16.75"+"22.25"
+    return
+
+
+@app.cell
+def _():
+    16.75 + "22.25"
+    return
+
+
+@app.cell
+def _():
+    6.75 + 22.25
     return
 
 
