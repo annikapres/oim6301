@@ -175,6 +175,13 @@ def _(freight_charges):
 def _(freight_charges):
     total=sum(freight_charges)
     total
+    return (total,)
+
+
+@app.cell
+def _(freight_charges, total):
+    avg_freight = total / len(freight_charges)
+    print(f"Total of freights were ${total:.2f} and the average charge was ${avg_freight:.2f}.")
     return
 
 
@@ -411,6 +418,30 @@ def _(mo):
     return
 
 
+@app.cell
+def _(freight_charges):
+    freight_charges[0]>20
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[-1]==max(freight_charges)
+    return
+
+
+@app.cell
+def _(freight_charges):
+    type(freight_charges[0]>20)
+    return
+
+
+@app.cell
+def _(freight_charges):
+    type(freight_charges[-1]==max(freight_charges))
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -424,6 +455,12 @@ def _(mo):
 @app.cell
 def _(freight_charges, orders):
     print(f"Order {orders[0]} paid ${freight_charges[0]:.2f} in freight.")
+    return
+
+
+@app.cell
+def _(freight_charges, orders):
+    print(f"Order {orders[2]} paid ${freight_charges[2]:.2f} in freight.")
     return
 
 
@@ -446,6 +483,18 @@ def _(mo):
 
     Your sentence should show `$120.50` and `$24.10`. If it does not, the experiments above left something changed: check that `freight_charges` still starts with `16.75` and that your `total` cell is still there.
     """)
+    return
+
+
+@app.cell
+def _(freight_charges, total):
+    print(f"Total of freights were ${total:.2f} and the average charge was ${total/len(freight_charges):.2f}.")
+    return
+
+
+@app.cell
+def _(freight_charges, total):
+    print(f"Total of freights were ${total:.2f} and the average charge was {total/len(freight_charges):.2f}.")
     return
 
 
