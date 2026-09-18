@@ -604,6 +604,14 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.md(rf"""
+    import pandsa
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(r"""
     This fails with `SyntaxError: '[' was never closed`. The closing `]` is missing, so Python can't tell where the list ends.
     """)
@@ -614,6 +622,14 @@ def _(mo):
 def _():
     import pandsa
 
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    mo.md("This fails with `ModuleNotFoundError: No module named 'pandsa'`.It's a typo — no such package exists, so Python can't find it to import.")
+    """)
     return
 
 
@@ -740,6 +756,18 @@ def _(mo):
 
     The square brackets inside `_ax.bar(...)` are a **list comprehension**, which **iterates** over `orders` and turns each number into text.
     """)
+    return
+
+
+@app.cell
+def _(freight_charges, orders):
+    import matplotlib.pyplot as plt
+
+    _fig, _ax = plt.subplots(figsize=(6, 2.6))
+    _ax.bar([str(_o) for _o in orders], freight_charges)
+    _ax.set_ylabel("freight")
+    _fig
+
     return
 
 
