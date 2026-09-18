@@ -374,7 +374,7 @@ def _():
 
 @app.cell
 def _():
-    16.75 + "22.25"
+    # cant have float and stir - 16.75 + "22.25"
     return
 
 
@@ -548,6 +548,22 @@ def _(mo):
     return
 
 
+@app.cell
+def _(freight_charges):
+    under_25 = []
+    for charge in freight_charges:
+        if charge<=25:
+            under_25.append(charge)
+    under_25
+    return (under_25,)
+
+
+@app.cell
+def _(under_25):
+    print(f"There are {len(under_25)} charges under 25, and add up to ${sum(under_25):.2f}.")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -589,12 +605,55 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    This fails with `SyntaxError: '[' was never closed`. The closing `]` is missing, so Python can't tell where the list ends.
+    """)
+    return
+
+
+@app.cell
+def _():
+    import pandsa
+
+    return
+
+
+@app.cell
+def _():
+    open("sales.csv")
+    return
+
+
+app._unparsable_cell(
+    r"""
+    new_charges = [16.75,22.25
+    """,
+    name="_"
+)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    import pandsa
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     # 🙋 A Line That Does Not Break
 
     Write down what this gives, then run it in a cell of your own.
 
     `max(["9.50", "16.75", "22.25"])`
     """)
+    return
+
+
+@app.cell
+def _():
+    max(["9.50", "16.75", "22.25"])
     return
 
 
@@ -609,6 +668,12 @@ def _(mo):
 
     📖 Handbook: Python §2 Types
     """)
+    return
+
+
+@app.cell
+def _():
+    max(9.50,16.75,22.25)
     return
 
 
@@ -641,6 +706,11 @@ def _(mo):
     2. Which line would you change, and why is it a different line from the one Python named?
     3. What would you change it to? More than one answer is defensible, so state the rule you chose.
     """)
+    return
+
+
+@app.cell
+def _():
     return
 
 
