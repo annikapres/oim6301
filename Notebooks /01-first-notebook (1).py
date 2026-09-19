@@ -552,7 +552,7 @@ def _(mo):
 def _(freight_charges):
     under_25 = []
     for charge in freight_charges:
-        if charge<=25:
+        if charge<25:
             under_25.append(charge)
     under_25
     return (under_25,)
@@ -585,6 +585,14 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    list index out of range
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     # ✏️ Break It Three Ways
 
     Each line below fails. Put each one in a cell of your own and run it. Under each, add a markdown cell that explains the last line of the error in your own words.
@@ -610,21 +618,6 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    This fails with `SyntaxError: '[' was never closed`. The closing `]` is missing, so Python can't tell where the list ends.
-    """)
-    return
-
-
-@app.cell
-def _():
-    import pandsa
-
-    return
-
-
 @app.cell
 def _(mo):
     mo.md(r"""
@@ -633,24 +626,18 @@ def _(mo):
     return
 
 
-@app.cell
-def _():
-    open("sales.csv")
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    open("sales.csv") [Errno 2] No such file or directory: 'sales.csv'
+    """)
     return
-
-
-app._unparsable_cell(
-    r"""
-    new_charges = [16.75,22.25
-    """,
-    name="_"
-)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    import pandsa
+    This fails with `SyntaxError: '[' was never closed`. The closing `]` is missing, so Python can't tell where the list ends.
     """)
     return
 
@@ -725,8 +712,11 @@ def _(mo):
     return
 
 
-@app.cell
-def _():
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    pending is a str so cant be added w the numbers, and should just remove pending so that the total can be calculated, pending means there was no number yet anyways
+    """)
     return
 
 
