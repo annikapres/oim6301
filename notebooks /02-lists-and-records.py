@@ -119,24 +119,44 @@ def _():
 
 @app.cell
 def _():
-    1/3
-    return
-
-
-@app.cell
-def _():
-    4/3
-    return
-
-
-@app.cell
-def _():
-    return
-
-
-@app.cell
-def _():
     4//3
+    return
+
+
+@app.cell
+def _():
+    freight_charges = [16.75, 22.25, 25.00]	
+    return (freight_charges,)
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[0]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    for charge in freight_charges:
+        freight_tax=charge*0.0625
+        total_charge = charge +freight_tax
+        print(f'Total charge is ${total_charge:.2f}.')
+    return
+
+
+@app.cell
+def _(freight_charges):
+    #find out all the charges below 25 (25 is not included, would be <= if 25 is included)
+    for charge_1 in freight_charges:
+        if charge_1<25:
+            print(charge_1)
+        
+    return
+
+
+@app.cell
+def _(freight_charges):
+    sum(freight_charges)
     return
 
 
@@ -289,10 +309,27 @@ def _(mo):
 @app.cell
 def _():
     score = 95
-    if score >= 60:
+    if score >= 60 and score <90:
         print("Pass")
-    elif score >= 90:
+    elif score >= 90: #remove elif to if, and will print both 
         print("A")
+    elif score>=80:
+        print("B")
+    else:
+        print('Fail')
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    when a score statisfies
+    """)
     return
 
 
