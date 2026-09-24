@@ -150,7 +150,7 @@ def _(freight_charges):
     for charge_1 in freight_charges:
         if charge_1<25:
             print(charge_1)
-        
+    
     return
 
 
@@ -357,6 +357,33 @@ def _(mo):
 def _():
     statuses = ["shipped", "pending", "shipped", "cancelled", "shipped"]
     statuses
+    return (statuses,)
+
+
+@app.cell
+def _(statuses):
+    shipped = 0
+    for status in statuses:
+        if status == "shipped":
+            shipped = shipped + 1
+    shipped
+    return (shipped,)
+
+
+@app.cell
+def _(statuses):
+    not_shipped = 0 
+    for _status in statuses:
+        if _status != "shipped":
+            not_shipped = not_shipped + 1
+    not_shipped
+    return
+
+
+@app.cell
+def _(shipped, statuses):
+    percent_shipped = (shipped/len(statuses))*100
+    percent_shipped
     return
 
 
