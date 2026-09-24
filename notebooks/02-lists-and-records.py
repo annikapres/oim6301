@@ -411,8 +411,22 @@ def _(mo):
 @app.cell
 def _():
     order_lines = ["notebook", "pen"]
-    order_lines.append(["stapler", "tape"])
+    order_lines.extend(["stapler", "tape"]) #extend adds several items at once, append puts them in one section
     len(order_lines)
+    return (order_lines,)
+
+
+@app.cell
+def _(order_lines):
+    print(order_lines[2])
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    append adds one thing for whatever is in [] even if there are commas. exend allows you to list multiple items inside [].
+    """)
     return
 
 
