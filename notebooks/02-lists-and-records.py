@@ -517,10 +517,46 @@ def _(mo):
 
 @app.cell
 def _():
+    # prices = [12.50, 8.00, 19.99]
+    # sale_prices = prices
+    # sale_prices.append(4.99)
+    # prices
+    return
+
+
+@app.cell
+def _():
     prices = [12.50, 8.00, 19.99]
-    sale_prices = prices
+    sale_prices = prices 
     sale_prices.append(4.99)
     prices
+    return prices, sale_prices
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _(sale_prices):
+    for i in range(len(sale_prices)):
+        sale_prices[i] = round(sale_prices[i] * 0.9, 2)
+    sale_prices
+    return
+
+
+@app.cell
+def _(prices, sale_prices):
+    prices is sale_prices
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    you would want two names to refer to the same list on purpose if you are trying to add new numbers to a list, like new customers to the existing list of customers rather than creating an entirely new list each time.
+    """)
     return
 
 
