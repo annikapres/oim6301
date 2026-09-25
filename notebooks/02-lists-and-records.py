@@ -457,6 +457,34 @@ def _():
     print(sorted(tickers))
     print(tickers.sort())
     tickers
+    return (tickers,)
+
+
+@app.cell
+def _(tickers):
+    print(sorted(tickers, reverse=True)) #sort tickers in descending order
+    return
+
+
+@app.cell
+def _(tickers):
+    print(sorted(tickers, reverse=False))#sort tickers in ascending order)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    tickers.sort() printed none because it was not told what tickers.sort was supposed to do, so it just printed the default return value of the method.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    tickers.sort() prints none because .sort() changes the tickers in place and gives back nothing, while sorted(tickers) leaves tickers alone and hands back a new, ordered list as its result.
+    """)
     return
 
 
