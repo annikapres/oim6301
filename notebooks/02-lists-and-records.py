@@ -136,11 +136,11 @@ def _(freight_charges):
 
 
 @app.cell
-def _(freight_charges):
-    for charge in freight_charges:
-        freight_tax=charge*0.0625
-        total_charge = charge +freight_tax
-        print(f'Total charge is ${total_charge:.2f}.')
+def _():
+    #for charge in freight_charges:
+        #freight_tax=charge*0.0625
+        #total_charge = charge +freight_tax
+        #print(f'Total charge is ${total_charge:.2f}.')
     return
 
 
@@ -150,7 +150,7 @@ def _(freight_charges):
     for charge_1 in freight_charges:
         if charge_1<25:
             print(charge_1)
-    
+
     return
 
 
@@ -230,6 +230,26 @@ def _(mo):
 def _():
     charges = [16.75, 22.25, 25.00, 20.25, 36.25]
     charges
+    return (charges,)
+
+
+@app.cell
+def _(charges):
+    charges[0]
+    charges[-1]
+    # charges[5] 
+
+    return
+
+
+@app.cell
+def _(charges):
+    total = 0
+    for charge in charges:
+        if charge < 25:
+            total = total + charge
+    total
+
     return
 
 
@@ -274,12 +294,16 @@ def _(mo):
     own, added with the **+** button.
 
     **A ·**
+    When a score satisfies two of these tests at once, whichever one is checked first, starting from the top, is the one that decides what gets printed. The rest are never even looked at.
 
     **C ·**
+    append adds one item for whatever is first in [] even if it is a list with commas. exend allows you to list multiple items inside [].
 
     **D ·**
+    tickers.sort() prints none because .sort() changes the tickers in place and gives back nothing, while sorted(tickers) leaves tickers alone and hands back a new, ordered list as its result.
 
     **E ·**
+    You would want two names to refer to the same list on purpose if you are trying to add new numbers to a list, like new customers to the existing list of customers rather than creating an entirely new list each time.
     """)
     return
 
@@ -320,15 +344,10 @@ def _():
     return
 
 
-@app.cell
-def _():
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    when a score statisfies
+    When a score satisfies two of these tests at once, whichever one is checked first, starting from the top, is the one that decides what gets printed. The rest are never even looked at.
     """)
     return
 
@@ -362,6 +381,13 @@ def _():
 
 @app.cell
 def _(statuses):
+    total_orders = len(statuses)
+    print(total_orders)
+    return (total_orders,)
+
+
+@app.cell
+def _(statuses):
     shipped = 0
     for status in statuses:
         if status == "shipped":
@@ -384,7 +410,7 @@ def _(statuses):
 def _(shipped, statuses):
     percent_shipped = (shipped/len(statuses))*100
     percent_shipped
-    return
+    return (percent_shipped,)
 
 
 @app.cell(hide_code=True)
@@ -425,7 +451,7 @@ def _(order_lines):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    append adds one thing for whatever is in [] even if there are commas. exend allows you to list multiple items inside [].
+    append adds one item for whatever is first in [] even if it is a list with commas. exend allows you to list multiple items inside [].
     """)
     return
 
@@ -588,6 +614,50 @@ def _():
     return
 
 
+@app.cell
+def _():
+    type(100+50)
+    return
+
+
+@app.cell
+def _():
+    type("100"+"50")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Did this because "100" + "50" is a string not integer
+    """)
+    return
+
+
+@app.cell
+def _():
+    int("100") + int("50")
+    return
+
+
+@app.cell
+def _():
+    100+50
+    return
+
+
+@app.cell
+def _():
+    int(100.5)
+    return
+
+
+@app.cell
+def _():
+    float(100.5)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -607,6 +677,40 @@ def _(mo):
     > `3 of 5 orders shipped (60%)`. An f-string is the short way to build a sentence out of
     > values, and it was section 5 of last week's notebook.
     """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    can't run charges[5] because the array only has 5 elements (indices 0-4).
+    """)
+    return
+
+
+@app.cell
+def _(charges):
+    charges[-1]
+    return
+
+
+@app.cell
+def _(charges):
+    charges[len(charges) - 1]
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    charges[-6] is out of range again, can only go to -5 (which would be the first item)
+    """)
+    return
+
+
+@app.cell
+def _(percent_shipped, shipped, total_orders):
+    print(f" {shipped} of {total_orders} orders shipped ({percent_shipped}%).")
     return
 
 
