@@ -150,7 +150,6 @@ def _(freight_charges):
     for charge_1 in freight_charges:
         if charge_1<25:
             print(charge_1)
-
     return
 
 
@@ -238,7 +237,6 @@ def _(charges):
     charges[0]
     charges[-1]
     # charges[5] 
-
     return
 
 
@@ -249,7 +247,6 @@ def _(charges):
         if charge < 25:
             total = total + charge
     total
-
     return
 
 
@@ -560,11 +557,6 @@ def _():
 
 
 @app.cell
-def _():
-    return
-
-
-@app.cell
 def _(sale_prices):
     for i in range(len(sale_prices)):
         sale_prices[i] = round(sale_prices[i] * 0.9, 2)
@@ -756,6 +748,12 @@ def _(first_order):
     return
 
 
+@app.cell
+def _(first_order):
+    first_order["OrderID"]
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -769,6 +767,21 @@ def _(mo):
 
     Two of them fail, and both give the same kind of error. Add a cell and find out
     which, and what the message says. A `KeyError` names the key it could not find.
+    """)
+    return
+
+
+@app.cell
+def _(first_order):
+    first_order["Freight"]
+
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    others failed cuz they were not identified in code above
     """)
     return
 
@@ -820,8 +833,14 @@ def _():
     {"OrderID": 11019, "CustomerID": "RANCH", "ShipCountry": "Argentina", "ShipCity": "Buenos Aires", "OrderDate": "2018-04-13", "ShippedDate": None, "Freight": 11.25},
     {"OrderID": 11039, "CustomerID": "LINOD", "ShipCountry": "Venezuela", "ShipCity": "I. de Margarita", "OrderDate": "2018-04-21", "ShippedDate": None, "Freight": 43.00},
     ]
-    len(orders)
+    len(orders), type(orders)
     return (orders,)
+
+
+@app.cell
+def _(orders):
+    type(orders[0])
+    return
 
 
 @app.cell(hide_code=True)
@@ -837,6 +856,19 @@ def _(mo):
 @app.cell
 def _(orders):
     orders[0]["ShipCountry"]
+    return
+
+
+@app.cell
+def _(orders):
+    orders[3]["ShipCountry"], orders[3]['ShippedDate'], orders[3]['ShipCity']
+
+    return
+
+
+@app.cell
+def _(orders):
+    orders[2]['ShipCity']
     return
 
 
@@ -862,6 +894,58 @@ def _(mo):
     return
 
 
+@app.cell
+def _(orders):
+    total_freight = 0
+    for order in orders:
+        total_freight = total_freight + order["Freight"]
+    total_freight
+    return
+
+
+@app.cell
+def _(orders):
+    no_shipped_date = 0 
+    for notship in orders:
+        if notship["ShippedDate"] is None:
+         no_shipped_date = no_shipped_date +1
+    no_shipped_date
+    return
+
+
+@app.cell
+def _(orders):
+    largest_freight = orders[0]["Freight"]
+    largest_order = orders[0]["OrderID"]
+    for _order in orders:
+        if _order["Freight"] > largest_freight:
+            largest_freight = _order["Freight"]
+            largest_order = _order["OrderID"]
+    largest_order, largest_freight
+    return
+
+
+@app.cell
+def _(orders):
+    for __order in orders:
+        if __order["ShippedDate"] is None:
+            print(__order["OrderID"], __order["OrderDate"])
+            # year is 2018 not 2016
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    concepts used:
+    total freight was a record read by name, list records as a table, loop, name and assignment, running total
+    no shipped date: for loop, if condition is none,
+    largest freight, for loop, is condition> comparison,
+    All three use the same four moves from section 2 (take one out, keep some, do the same to each, turn many into one), just applied to records instead of plain values.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -882,10 +966,8 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    *One row is ...*
-
-    *(Replace this line with your own sentence. If this cell shows you code instead of
-    text, use the cell menu to turn it into a markdown cell.)*
+    *One row is a single order that a customer placed with the company and is marked with hitting the return button on your computer and separated by a comma. One row tells you all about what happened with that one shipment - who it went to, where, when it was placed and when or whether it went out the door.*
+    Check: if a row is one order, this table should have as many rows as there are orders: 30, which matches.
     """)
     return
 
@@ -923,6 +1005,44 @@ def _():
         {"Symbol": "TSLA", "Shares": 150, "Price": 255.70},
     ]
     portfolio
+    return (portfolio,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Mulitply each symbol's "Shares" with its corresponding "Price". Then add up all of those numbers to find the sum of the portfolio
+    """)
+    return
+
+
+@app.cell
+def _(portfolio):
+    portfolio_total = 0
+    for holding in portfolio:
+        portfolio_total = portfolio_total + holding["Shares"] * holding["Price"]
+    portfolio_total
+    return
+
+
+@app.cell
+def _():
+    invoices = [
+        {"Client": "Acme Corp", "Hours": 12, "Rate": 85.00},
+        {"Client": "Beta LLC", "Hours": 5, "Rate": 120.00},
+        {"Client": "Cargo Inc", "Hours": 20, "Rate": 60.00},
+        {"Client": "Delta Co", "Hours": 8, "Rate": 95.00},
+    ]
+    invoices
+    return (invoices,)
+
+
+@app.cell
+def _(invoices):
+    total_invoices = 0
+    for invoice in invoices:
+        total_invoices = total_invoices + invoice["Hours"]*invoice["Rate"]
+    total_invoices
     return
 
 
@@ -974,6 +1094,25 @@ def _(mo):
         _where = f"could not write into {_data_dir.name}/: {_error}"
 
     _where
+    return
+
+
+@app.cell
+def _():
+    total_cost = 0
+    with open("data/portfolio.csv") as file:
+        lines = file.readlines()
+
+    for line in lines[1:]:
+        parts = line.strip().split(",")
+        name = parts[0]
+        shares = int(parts[1])
+        price = float(parts[2])
+        cost = shares * price
+        total_cost = total_cost + cost
+        print(f"{name:<8}{shares:>8}{price:>10.2f}")
+
+    print(f"Total cost: ${total_cost:.2f}")
     return
 
 
