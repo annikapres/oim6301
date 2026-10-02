@@ -191,6 +191,70 @@ def _(mo):
 def _():
     closing_prices = {"AAPL": 260.81, "NVDA": 186.00, "MSFT": 404.88, "GOOG": 308.42}
     closing_prices
+    return (closing_prices,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    1. Price for AAPl is 260.81
+    """)
+    return
+
+
+@app.cell
+def _():
+    # "TSLA" in closing_prices
+    return
+
+
+@app.cell
+def _(closing_prices):
+    closing_prices.get("TSLA")
+    return
+
+
+@app.cell
+def _(closing_prices):
+    closing_prices.get("TSLA", 0)
+    return
+
+
+@app.cell
+def _(closing_prices):
+    above_200 = []
+    for ticker in closing_prices:
+        if closing_prices[ticker] > 200:
+            above_200.append(ticker)
+    above_200
+    return
+
+
+@app.cell
+def _(closing_prices):
+    highest_price = 0
+    highest_ticker = ""
+    for tickers in closing_prices:
+        if closing_prices[tickers] > highest_price:
+            highest_price = closing_prices[tickers]
+            highest_ticker = tickers
+    highest_ticker
+    return
+
+
+@app.cell
+def _(closing_prices):
+    new_prices = {}
+    for _ticker in closing_prices:
+        new_prices[_ticker] = round(closing_prices[_ticker] * 1.1, 2)
+    new_prices
+    return
+
+
+@app.cell
+def _():
+    #round numbers to the nearest integer, and ,2 is 2 decimals 
+
     return
 
 

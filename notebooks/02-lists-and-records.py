@@ -78,17 +78,17 @@ def _(mo):
 
 @app.cell
 def _():
-    cost=input('Enter the cost:')
-    tax=input('Enter the tax:')
+    #cost=input('Enter the cost:')
+    #tax=input('Enter the tax:')
     return
 
 
 @app.cell
 def _():
-    #cost="16.75"
-    #tax="3.25"
-    #total_cost = float(cost)+float(tax)
-    #print(cost)
+    # cost="16.75"
+    # tax="3.25"
+    # total_cost = float(cost)+float(tax)
+    # print(cost)
     return
 
 
@@ -136,11 +136,11 @@ def _(freight_charges):
 
 
 @app.cell
-def _():
-    #for charge in freight_charges:
-        #freight_tax=charge*0.0625
-        #total_charge = charge +freight_tax
-        #print(f'Total charge is ${total_charge:.2f}.')
+def _(freight_charges):
+    for charge in freight_charges:
+        freight_tax=charge*0.0625
+        total_charge = charge +freight_tax
+        print(f'Total charge is ${total_charge:.2f}.')
     return
 
 
@@ -774,7 +774,6 @@ def _(mo):
 @app.cell
 def _(first_order):
     first_order["Freight"]
-
     return
 
 
@@ -862,7 +861,6 @@ def _(orders):
 @app.cell
 def _(orders):
     orders[3]["ShipCountry"], orders[3]['ShippedDate'], orders[3]['ShipCity']
-
     return
 
 
