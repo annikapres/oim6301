@@ -158,6 +158,7 @@ def _(mo):
     Several questions below ask for a sentence. This cell is where they go. Click into it, write under the letter, and press `Ctrl+Enter` (Windows) or `Cmd+Enter` (macOS).
 
     **B ·**
+    France, Germany, Brazil, and the US had the most orders to these countries, all 4.
 
     **C ·**
 
@@ -282,6 +283,15 @@ def _():
         "Finland", "USA", "USA", "Germany", "France", "Austria", "Argentina", "Venezuela",
     ]
     len(ship_countries)
+    return (ship_countries,)
+
+
+@app.cell
+def _(ship_countries):
+    orders_countries = {}
+    for order in ship_countries:
+        orders_countries[order] = orders_countries.get(order, 0) + 1
+    orders_countries
     return
 
 
@@ -300,6 +310,12 @@ def _():
     first_holding = ("GOOG", 100, 131.36)
     first_holding[0], len(first_holding)
     return (first_holding,)
+
+
+@app.cell
+def _():
+    # first_holding[1]=75
+    return
 
 
 @app.cell(hide_code=True)
@@ -406,6 +422,14 @@ def _():
     traded_tickers = set(client_trades)
     len(client_trades), len(traded_tickers), sorted(traded_tickers)
     return (traded_tickers,)
+
+
+@app.cell
+def _():
+    # len counts ALL of the characters in the string
+    # len of a set counts only the unique characters in the string, so NO REPEATS
+    # sorted does it in alphabetic order
+    return
 
 
 @app.cell(hide_code=True)
