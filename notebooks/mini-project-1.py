@@ -76,7 +76,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    I would solve these steps first by looking at daily demand : take the starting stock amount and start subtracting the daily demand. Keep in mind that it takes 3 days to deliver the 100 cartons, so have to keep the amount in stock above 40-60 before ordering the next shipment, since they they could go through 8-20 in a day.
+    I would solve these steps first by looking at daily demand : take the starting stock amount and start subtracting the daily demand. Keep in mind that it takes 3 days to deliver the 100 cartons, so have to keep the amount in stock above 40-60 before ordering the next shipment, since they they could go through 8-20 in a day. Then simulate day by day using a loop, tracking the current stock level, pending orders, and their arrival dates.
 
     Loop would carry the leftovers of the day before into the next as the current stock point and then subtract that day's demand to get the new stock level. When the running stock gets close to the reorder threshold (around 40-60 cartons), trigger a new order of 100 cartons, but remember it won't arrive for 3 days, so the stock will keep depleting during that lead time before the new shipment lands. Orders that have been placed but not delivered are tracked until their arrival day.
 
