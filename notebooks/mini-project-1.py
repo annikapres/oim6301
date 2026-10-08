@@ -103,6 +103,17 @@ def _():
     return
 
 
+@app.cell
+def _():
+    starting_stock = 60
+    order_quantity = 100
+    lead_time_days = 3
+    reorder_points = [20, 30, 40, 50]
+    daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,
+                    9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
