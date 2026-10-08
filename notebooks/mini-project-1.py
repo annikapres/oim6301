@@ -111,7 +111,7 @@ def _():
     reorder_points = [20, 30, 40, 50]
     daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,
                     9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
-    return
+    return daily_demand, lead_time_days, order_quantity, starting_stock
 
 
 @app.cell(hide_code=True)
@@ -124,8 +124,93 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(daily_demand, lead_time_days, order_quantity, starting_stock):
+    reorder_point = 40
+    stock = starting_stock
+    order_due_day = -1  # -1 means "no order is currently on its way"
+
+    starting_list = []
+    arrived_list = []
+    demand_list = []
+    sold_list = []
+    lost_list = []
+    ending_list = []
+    ordered_list = []
+
+    for i in range(len(daily_demand)):
+        day_start = stock
+        arrived = 0
+
+        if order_due_day == i:
+            stock = stock + order_quantity
+            arrived = order_quantity
+            order_due_day = -1
+
+        demand = daily_demand[i]
+        if stock >= demand:
+            sold = demand
+            lost = 0
+        else:
+            sold = stock
+            lost = demand - sold
+
+        stock = stock - sold
+        ordered = 0
+
+        if stock <= reorder_point and order_due_day == -1:
+            order_due_day = i + lead_time_days
+            ordered = order_quantity
+
+        starting_list.append(day_start)
+        arrived_list.append(arrived)
+        demand_list.append(demand)
+        sold_list.append(sold)
+        lost_list.append(lost)
+        ending_list.append(stock)
+        ordered_list.append(ordered)
+    for i in range(len(daily_demand)):
+        print(
+            f"Day {i+1}: start={starting_list[i]}, arrived={arrived_list[i]}, "
+            f"demand={demand_list[i]}, sold={sold_list[i]}, lost={lost_list[i]}, "
+            f"end={ending_list[i]}, ordered={ordered_list[i]}"
+        )
+    return (
+        arrived_list,
+        demand_list,
+        ending_list,
+        lost_list,
+        ordered_list,
+        sold_list,
+        starting_list,
+    )
+
+
 @app.cell
-def _():
+def _(
+    arrived_list,
+    daily_demand,
+    demand_list,
+    ending_list,
+    lost_list,
+    ordered_list,
+    sold_list,
+    starting_list,
+):
+    import pandas as pd
+
+    table_40 = pd.DataFrame({
+        "Day": range(1, len(daily_demand) + 1),
+        "Starting Stock": starting_list,
+        "Arrived": arrived_list,
+        "Demand": demand_list,
+        "Sold": sold_list,
+        "Lost": lost_list,
+        "Ending Stock": ending_list,
+        "Units Ordered": ordered_list
+    })
+
+    table_40
     return
 
 
