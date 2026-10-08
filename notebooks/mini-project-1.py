@@ -111,7 +111,13 @@ def _():
     reorder_points = [20, 30, 40, 50]
     daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,
                     9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
-    return daily_demand, lead_time_days, order_quantity, starting_stock
+    return (
+        daily_demand,
+        lead_time_days,
+        order_quantity,
+        reorder_points,
+        starting_stock,
+    )
 
 
 @app.cell(hide_code=True)
@@ -211,6 +217,87 @@ def _(
     })
 
     table_40
+    return (pd,)
+
+
+@app.cell
+def _():
+    print("hi")
+
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _(
+    daily_demand,
+    lead_time_days,
+    order_quantity,
+    pd,
+    reorder_points,
+    starting_stock,
+):
+    summary_points = []
+    summary_units_lost = []
+    summary_lost_days = []
+    summary_orders_placed = []
+    summary_avg_ending = []
+
+    for rp in reorder_points:
+        cur_stock = starting_stock
+        due_day = -1
+        total_lost = 0
+        lost_day_count = 0
+        orders_count = 0
+        ending_sum = 0
+
+        for day_i in range(len(daily_demand)):
+            day_arrived = 0
+            if due_day == day_i:
+                cur_stock = cur_stock + order_quantity
+                day_arrived = order_quantity
+                due_day = -1
+
+            day_demand = daily_demand[day_i]
+            if cur_stock >= day_demand:
+                day_sold = day_demand
+                day_lost = 0
+            else:
+                day_sold = cur_stock
+                day_lost = day_demand - day_sold
+
+            cur_stock = cur_stock - day_sold
+            total_lost = total_lost + day_lost
+            if day_lost > 0:
+                lost_day_count = lost_day_count + 1
+
+            if cur_stock <= rp and due_day == -1:
+                due_day = day_i + lead_time_days
+                orders_count = orders_count + 1
+
+            ending_sum = ending_sum + cur_stock
+
+        average_ending = ending_sum / len(daily_demand)
+
+        summary_points.append(rp)
+        summary_units_lost.append(total_lost)
+        summary_lost_days.append(lost_day_count)
+        summary_orders_placed.append(orders_count)
+        summary_avg_ending.append(average_ending)
+
+    table_reorder_compare = pd.DataFrame({
+        "Reorder Point": summary_points,
+        "Units Lost": summary_units_lost,
+        "Days With Lost Sale": summary_lost_days,
+        "Orders Placed": summary_orders_placed,
+        "Average Ending Stock": summary_avg_ending
+    })
+
+    table_reorder_compare
     return
 
 
