@@ -161,8 +161,14 @@ def _(mo):
     France, Germany, Brazil, and the US had the most orders to these countries, all 4.
 
     **C ·**
+    1. A list because the lines can be added, removed, and reordered, so the collection needs to be changeable and ordered.
+    2. A set because each customer appears only once, and a set stores unique values.
+    3. A dictionary because the product names are the named parts that allow you to look up the units sold for each product.
+    4. A tuple because it can not be changed and the shipment details are fixed once recorded.
 
     **D ·**
+    I would rather work with a dictionary than a tuple because a dictionary is easier to look up the values I need by key instead of by position.
+    This makes the code more readable and less error-prone, since I don't have to remember the exact index of each value in the tuple.
 
     **G ·**
     """)
@@ -506,6 +512,17 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    1. A list because the lines can be added, removed, and reordered, so the collection needs to be changeable and ordered.
+    2. A set because each customer appears only once, and a set stores unique values.
+    3. A dictionary because the product names are the named parts that allow you to look up the units sold for each product.
+    4. A tuple because it can not be changed and the shipment details are fixed once recorded.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     ## ✏️ D · The portfolio again
 
     Notebook 2 held the six holdings as a list of dictionaries. Here they are as a list of tuples, one holding per tuple.
@@ -532,6 +549,89 @@ def _():
         ("TSLA", 150, 255.70),
     ]
     holdings
+    return (holdings,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I would rather work with a dictionary than a tuple because a dictionary is easier to look up the values I need by key instead of by position.
+    This makes the code more readable and less error-prone, since I don't have to remember the exact index of each value in the tuple.
+    """)
+    return
+
+
+@app.cell
+def _(holdings):
+    holdings[0][1]*holdings[0][2]
+    return
+
+
+@app.cell
+def _():
+    100*173.93
+    return
+
+
+@app.cell
+def _(holdings):
+    (holdings[0][1]*holdings[0][2])+(holdings[1][1]*holdings[1][2])+(holdings[2][1]*holdings[2][2])+(holdings[3][1]*holdings[3][2])+(holdings[4][1]*holdings[4][2])+(holdings[5][1]*holdings[5][2])
+    return
+
+
+@app.cell
+def _(holdings):
+    total_cost = 0
+
+    for _symbol, _shares, _price in holdings:
+        total_cost = total_cost+ _shares * _price
+
+    total_cost
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    AI agent said that you can list multiple tuples in holdings, puts names of stock, all the shares and price listed before holding.
+    """)
+    return
+
+
+@app.cell
+def _(holdings):
+    holding_costs = {}
+
+    for _symbol, _shares, _price in holdings:
+        holding_costs[_symbol] = _shares * _price
+
+    largest_holding = max(holding_costs, key=holding_costs.get)
+
+    largest_holding, holding_costs[largest_holding]
+    return (holding_costs,)
+
+
+@app.cell
+def _():
+    #2 different ways 
+    return
+
+
+@app.cell
+def _(holding_costs, holdings):
+    _holding_costs = {}
+
+    for _symbol, _shares, _price in holdings:
+        _holding_costs[_symbol] = _shares * _price
+
+    highest_cost = 0
+    highest_holding = ""
+    for _ticker in holding_costs:
+        if _holding_costs[_ticker] > highest_cost:
+            highest_cost = _holding_costs[_ticker]
+            highest_holding = _ticker
+
+    highest_holding, highest_cost
     return
 
 
