@@ -171,6 +171,9 @@ def _(mo):
     This makes the code more readable and less error-prone, since I don't have to remember the exact index of each value in the tuple.
 
     **G ·**
+
+    There are 2 Babson Parks, the first one listed is in Florida and the second one listed is in Massachusetts.
+    Since there are two, the code that always takes the [0], (the first one listed), would always select the Florida park, not the Massachusetts one. If we were looking for the Massachusetts park, this would be a incorrect, since the code would return the wrong result, (Florida) instead of the correct one (Massachusetts), without even telling us. The fix should instead search specifically for the Massachusetts park, perhaps by filtering on the state field rather than relying on list order.
     """)
     return
 
@@ -855,7 +858,7 @@ def _(requests):
 def _(wellesley_reply):
     wellesley_place = wellesley_reply.json()["results"][0]
     wellesley_place["latitude"], wellesley_place["longitude"], wellesley_place["admin1"]
-    return
+    return (wellesley_place,)
 
 
 @app.cell(hide_code=True)
@@ -865,6 +868,50 @@ def _(mo):
 
     **Going further.** Use F's coordinates to ask for Wellesley's current temperature. Build the address with an f-string, so that changing the town changes the forecast.
     """)
+    return
+
+
+@app.cell
+def _(requests):
+    babson_park_reply = requests.get(
+        "https://geocoding-api.open-meteo.com/v1/search?name=Babson Park&count=5",
+        timeout=10,
+    )
+    babson_park_reply.status_code, babson_park_reply.json()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    There are 2 Babson Parks, the first one listed is in Florida and the second one listed is in Massachusetts.
+    Since there are two, the code that always takes the [0], (the first one listed), would always select the Florida park, not the Massachusetts one. If we were looking for the Massachusetts park, this would be a incorrect, since the code would return the wrong result, (Florida) instead of the correct one (Massachusetts), without even telling us. The fix should instead search specifically for the Massachusetts park, perhaps by filtering on the state field rather than relying on list order.
+    """)
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _(wellesley_place):
+    wellesley_url = (
+        "https://api.open-meteo.com/v1/forecast"
+        f"?latitude={wellesley_place['latitude']}&longitude={wellesley_place['longitude']}"
+        "&current=temperature_2m"
+        "&temperature_unit=fahrenheit&timezone=America/New_York"
+    )
+    wellesley_url
+    return (wellesley_url,)
+
+
+@app.cell
+def _(requests, wellesley_url):
+    wellesley_weather_reply = requests.get(wellesley_url, timeout=10)
+    wellesley_weather = wellesley_weather_reply.json()
+    wellesley_weather["current"]["temperature_2m"]
     return
 
 
