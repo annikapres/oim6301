@@ -220,15 +220,13 @@ def _(
     return (pd,)
 
 
-@app.cell
-def _():
-    print("hi")
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## 5. The Answer
 
-    return
-
-
-@app.cell
-def _():
+    *A table of your results in the cell below, printed with `print` and f-strings, then one sentence here that answers the question in section 1, with the number in it.*
+    """)
     return
 
 
@@ -298,21 +296,21 @@ def _(
     })
 
     table_reorder_compare
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ## 5. The Answer
-
-    *A table of your results in the cell below, printed with `print` and f-strings, then one sentence here that answers the question in section 1, with the number in it.*
-    """)
-    return
+    return summary_avg_ending, summary_units_lost
 
 
 @app.cell
-def _():
+def _(reorder_points, summary_avg_ending, summary_units_lost):
+    print(
+        f"The reorder point that is the most ideal is "
+        f"{reorder_points[2]}. There were {summary_units_lost[2]} units lost, "
+        f"and the average ending stock was around "
+        f"{summary_avg_ending[2]:.1f} units. "
+        f"Any lower reorder points like "
+        f"{reorder_points[0]} or {reorder_points[1]} would result in more units lost, "
+        f"while any higher like {reorder_points[3]} would "
+        f"increase the average ending stock without significantly reducing lost units."
+    )
     return
 
 
@@ -327,7 +325,27 @@ def _(mo):
 
 
 @app.cell
-def _():
+def _(demand_list, lost_list, sold_list):
+    total_demand = sum(demand_list)
+    total_sold_and_lost = sum(sold_list) + sum(lost_list)
+
+    print(total_demand)
+    print(total_sold_and_lost)
+    print(total_demand == total_sold_and_lost) 
+    return
+
+
+@app.cell
+def _(daily_demand):
+    sum(daily_demand)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Every unit of demand each day either gets sold or gets lost, so the 2 totals must match if the code was correct. The concepts I used was values and names, lists, and sum and print statements.
+    """)
     return
 
 
@@ -346,11 +364,278 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    It added the f string, and it assumed there was a [4] reorder point, and it only went up to [3].
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The agent got the tables right on the second try. The first try, the agent only made a table for 40 reorder points, so when I was trying to compare with the other reorder points, like 20, 30 and 50, it was not calculating. I had to point out that the comparison required reorder points across the full range, not just one value, before the agent regenerated the tables correctly.
+
+    After clarifying the requirement, the agent correctly regenerated the tables with reorder points of 20, 30, 40, and 50, allowing for a proper side-by-side comparison. This highlighted the importance of being explicit about the full scope of parameters needed when requesting comparative analysis, rather than assuming the agent would infer the complete range from context.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     ## 8. Going Further
 
     *Take at least one step past the main task, in any direction, and use your agent as much as you like. It does not have to work. State what you tried, what you found, and where it is in this notebook.*
     """)
     return
+
+
+@app.cell
+def _():
+    # COST 
+    return
+
+
+@app.cell
+def _(daily_demand, lead_time_days, order_quantity, pd, starting_stock):
+    _cost_points = []
+    _cost_total_lost = []
+    _cost_orders_placed = []
+    _cost_holding_sum = []
+    _cost_total = []
+
+    for _rp in range(10, 81, 10):
+        _cur_stock = starting_stock
+        _due_day = -1
+        _total_lost = 0
+        _orders_count = 0
+        holding_sum = 0
+
+        for _day_i in range(len(daily_demand)):
+            if _due_day == _day_i:
+                _cur_stock = _cur_stock + order_quantity
+                _due_day = -1
+
+            _day_demand = daily_demand[_day_i]
+            if _cur_stock >= _day_demand:
+                _day_sold = _day_demand
+                _day_lost = 0
+            else:
+                _day_sold = _cur_stock
+                _day_lost = _day_demand - _day_sold
+
+            _cur_stock = _cur_stock - _day_sold
+            _total_lost = _total_lost + _day_lost
+
+            if _cur_stock <= _rp and _due_day == -1:
+                _due_day = _day_i + lead_time_days
+                _orders_count = _orders_count + 1
+
+            holding_sum = holding_sum + _cur_stock
+
+        holding_cost = 0.50 * holding_sum
+        delivery_cost = 40 * _orders_count
+        lost_margin_cost = 8 * _total_lost
+        total_cost = holding_cost + delivery_cost + lost_margin_cost
+
+        _cost_points.append(_rp)
+        _cost_total_lost.append(_total_lost)
+        _cost_orders_placed.append(_orders_count)
+        _cost_holding_sum.append(holding_sum)
+        _cost_total.append(total_cost)
+
+    _table_cost_compare = pd.DataFrame({
+        "Reorder Point": _cost_points,
+        "Units Lost": _cost_total_lost,
+        "Orders Placed": _cost_orders_placed,
+        "Carton-Nights in Fridge": _cost_holding_sum,
+        "Total Cost ($)": _cost_total
+    })
+
+    _table_cost_compare
+
+    best_cost = _cost_total[0]
+    best_point = _cost_points[0]
+
+    for k in range(len(_cost_points)):
+        if _cost_total[k] < best_cost:
+            best_cost = _cost_total[k]
+            best_point = _cost_points[k]
+
+    print(f"The lowest-cost reorder point is {best_point}, costing ${best_cost:.2f} over the 30 days.")
+    _table_cost_compare
+    return
+
+
+@app.cell
+def _(lead_time_days, order_quantity, starting_stock):
+    import random
+
+    random.seed(42)
+
+    year_demand = []
+    for _ in range(365):
+        year_demand.append(random.randint(8, 20))
+
+    year_stock = starting_stock
+    year_due_day = -1
+    year_total_lost = 0
+    year_lost_days = 0
+    year_ending_sum = 0
+
+    for yr_day_i in range(len(year_demand)):
+        if year_due_day == yr_day_i:
+            year_stock = year_stock + order_quantity
+            year_due_day = -1
+
+        yr_day_demand = year_demand[yr_day_i]
+        if year_stock >= yr_day_demand:
+            yr_day_sold = yr_day_demand
+            yr_day_lost = 0
+        else:
+            yr_day_sold = year_stock
+            yr_day_lost = yr_day_demand - yr_day_sold
+
+        year_stock = year_stock - yr_day_sold
+        year_total_lost = year_total_lost + yr_day_lost
+        if yr_day_lost > 0:
+            year_lost_days = year_lost_days + 1
+
+        if year_stock <= 40 and year_due_day == -1:
+            year_due_day = yr_day_i + lead_time_days
+
+        year_ending_sum = year_ending_sum + year_stock
+
+    year_avg_ending = year_ending_sum / len(year_demand)
+
+    print(f"Over 365 random days with reorder point 40:")
+    print(f"Units lost: {year_total_lost}")
+    print(f"Days with a lost sale: {year_lost_days} out of {len(year_demand)}")
+    print(f"Average ending stock: {year_avg_ending:.1f}")
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _(mo):
+    reorder_point_slider = mo.ui.slider(10, 80, value=40, step=5, label="Reorder point")
+    reorder_point_slider
+    return (reorder_point_slider,)
+
+
+@app.cell
+def _(
+    alt,
+    daily_demand,
+    lead_time_days,
+    order_quantity,
+    pd,
+    reorder_point_slider,
+    starting_stock,
+):
+    _stock = starting_stock
+    _due_day = -1
+    _ending_list = []
+
+    for _i in range(len(daily_demand)):
+        if _due_day == _i:
+            _stock = _stock + order_quantity
+            _due_day = -1
+
+        _demand = daily_demand[_i]
+        if _stock >= _demand:
+            _sold = _demand
+        else:
+            _sold = _stock
+
+        _stock = _stock - _sold
+
+        if _stock <= reorder_point_slider.value and _due_day == -1:
+            _due_day = _i + lead_time_days
+
+        _ending_list.append(_stock)
+
+    _chart_df = pd.DataFrame({
+        "Day": range(1, len(daily_demand) + 1),
+        "Ending Stock": _ending_list
+    })
+
+    _stock_line = alt.Chart(_chart_df).mark_line(point=True).encode(
+        x=alt.X("Day", title="Day"),
+        y=alt.Y("Ending Stock", title="Ending Stock (cartons)"),
+        tooltip=["Day", "Ending Stock"]
+    ).properties(
+        title=f"Stock Over 30 Days (Reorder Point = {reorder_point_slider.value})",
+        width=600,
+        height=300
+    )
+
+    _reorder_rule = alt.Chart(pd.DataFrame({"y": [reorder_point_slider.value]})).mark_rule(
+        color="red", strokeDash=[4, 4]
+    ).encode(y="y")
+
+    _stock_line + _reorder_rule
+    return
+
+
+@app.cell
+def _(
+    daily_demand,
+    lead_time_days,
+    order_quantity,
+    pd,
+    reorder_point_slider,
+    starting_stock,
+):
+    import altair as alt
+
+    _stock = starting_stock
+    _due_day = -1
+    _ending_list = []
+
+
+    for _i in range(len(daily_demand)):
+        if _due_day == _i:
+            _stock = _stock + order_quantity
+            _due_day = -1
+
+        _demand = daily_demand[_i]
+        if _stock >= _demand:
+            _sold = _demand
+        else:
+            _sold = _stock
+
+        _stock = _stock - _sold
+
+        if _stock <= reorder_point_slider.value and _due_day == -1:
+            _due_day = _i + lead_time_days
+
+        _ending_list.append(_stock)
+
+    _chart_df = pd.DataFrame({
+        "Day": range(1, len(daily_demand) + 1),
+        "Ending Stock": _ending_list
+    })
+
+    _stock_line = alt.Chart(_chart_df).mark_line(point=True).encode(
+        x=alt.X("Day", title="Day"),
+        y=alt.Y("Ending Stock", title="Ending Stock (cartons)"),
+        tooltip=["Day", "Ending Stock"]
+    ).properties(
+        title=f"Stock Over 30 Days (Reorder Point = {reorder_point_slider.value})",
+        width=600,
+        height=300
+    )
+
+    _reorder_rule = alt.Chart(pd.DataFrame({"y": [reorder_point_slider.value]})).mark_rule(
+        color="red", strokeDash=[4, 4]
+    ).encode(y="y")
+
+    _stock_line + _reorder_rule
+    return (alt,)
 
 
 if __name__ == "__main__":
