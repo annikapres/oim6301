@@ -428,6 +428,71 @@ def _(mo):
     return
 
 
+@app.cell
+def _(requests):
+    def get_temperature(town):
+        search_reply = requests.get(
+            "https://geocoding-api.open-meteo.com/v1/search",
+            params={"name": town, "count": 1},
+            timeout=10,
+        )
+        place = search_reply.json()["results"][0]
+
+        weather_reply = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": place["latitude"],
+                "longitude": place["longitude"],
+                "current_weather": True,
+                "temperature_unit": "fahrenheit",
+            },
+            timeout=10,
+        )
+        return weather_reply.json()["current_weather"]["temperature"]
+
+    get_temperature("Wellesley")
+    return
+
+
+@app.cell
+def _(requests):
+    def get_temperatures(town, state=None):
+        search_reply = requests.get(
+            "https://geocoding-api.open-meteo.com/v1/search",
+            params={"name": town, "count": 10},
+            timeout=10,
+        )
+        results = search_reply.json()["results"]
+
+        place = results[0]
+        if state is not None:
+            for result in results:
+                if result["admin1"] == state:
+                    place = result
+                    break
+
+        weather_reply = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": place["latitude"],
+                "longitude": place["longitude"],
+                "current_weather": True,
+                "temperature_unit": "fahrenheit",
+            },
+            timeout=10,
+        )
+        return weather_reply.json()["current_weather"]["temperature"]
+
+    get_temperatures("Babson Park")
+    return (get_temperatures,)
+
+
+@app.cell
+def _(get_temperatures):
+    get_temperatures("Babson Park", "Massachusetts")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -437,6 +502,12 @@ def _(mo):
 
     *Check yourself: Dover, Wellesley, Cohasset, Needham, Westwood.*
     """)
+    return
+
+
+@app.cell
+def _():
+    #asked norfolk in county, sort by income in descending order 
     return
 
 
@@ -453,6 +524,53 @@ def _(mo):
 
     **Going further.** Write `town_history(name)`, which takes a town's name, makes both requests, and returns the history.
     """)
+    return
+
+
+@app.cell
+def _():
+    {
+      "dor_code": "317",
+      "name": "Wellesley",
+      "years": [
+        {
+          "fiscal_year": 2026,
+          "residential_rate_per_thousand": 10.17,
+          "commercial_rate_per_thousand": 10.17,
+          "single_family_parcels": 7319,
+          "average_single_family_value_dollars": 2020758,
+          "average_single_family_bill_dollars": 20551
+        }
+      ]
+    }
+    return
+
+
+@app.cell
+def _():
+    2020758*10.17/1000
+    return
+
+
+@app.cell
+def _(requests):
+    def town_history(name):
+        towns_reply = requests.get(
+            "https://oim.zhili.dev/ma/towns",
+            params={"name": name},
+            timeout=10,
+        )
+        town = towns_reply.json()["items"][0]
+        dor_code = town["dor_code"]
+
+        history_reply = requests.get(
+            f"https://oim.zhili.dev/ma/towns/{dor_code}/history",
+            params={"fiscal_year": 2026},
+            timeout=10,
+        )
+        return history_reply.json()
+
+    town_history("Wellesley")
     return
 
 
