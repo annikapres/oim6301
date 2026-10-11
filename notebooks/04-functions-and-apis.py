@@ -136,7 +136,7 @@ def compute_cost(portfolio):
         cost_so_far += cost_so_far + shares * price
         # stock_cost = stock[1]* stock[2]
         # cost_so_far +=stock_cost
-    return round(cost_so_far, 2) #,2 is 2 decimals
+    return round(cost_so_far, 2)
 
 
 @app.cell
@@ -195,12 +195,100 @@ def _(mo):
     return
 
 
+@app.cell
+def _(holdings):
+    def count_shares(portfolio):
+        total = 0
+        for symbol, shares, price in portfolio:
+            total += shares
+        return total
+
+    count_shares(holdings)
+    return (count_shares,)
+
+
+@app.cell
+def _(count_shares, retirement_holdings):
+    count_shares(retirement_holdings)
+    return
+
+
+@app.cell
+def _(holdings):
+    def find_largest(portfolio):
+        best_symbol = portfolio[0][0]
+        best_cost = portfolio[0][1] * portfolio[0][2]
+        for symbol, shares, price in portfolio:
+            cost = shares * price
+            if cost > best_cost:
+                best_symbol = symbol
+                best_cost = cost
+        return (best_symbol, best_cost)
+
+    find_largest(holdings)
+    return (find_largest,)
+
+
+@app.cell
+def _(find_largest, retirement_holdings):
+    find_largest(retirement_holdings)
+    return
+
+
+@app.cell
+def _(holdings):
+    def find_largestlist(portfolio, n=1):
+        remaining = list(portfolio)
+        result = []
+        for i in range(n):
+            best_holding = remaining[0]
+            best_cost = remaining[0][1] * remaining[0][2]
+            for symbol, shares, price in remaining:
+                cost = shares * price
+                if cost > best_cost:
+                    best_holding = (symbol, shares, price)
+                    best_cost = cost
+            result.append((best_holding[0], best_cost))
+            remaining.remove(best_holding)
+        return result
+
+    find_largestlist(holdings, 3)
+    return (find_largestlist,)
+
+
+@app.cell
+def _(find_largestlist, retirement_holdings):
+    find_largestlist(retirement_holdings, 2)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## ✏️ B · Without `return`
 
     Copy `count_shares` into a new cell under a new name, and put `print(...)` where the `return` was. Call it and keep the result in a name. In a markdown cell under it, answer: what does that name hold, and what could the next cell do with it?
+    """)
+    return
+
+
+@app.cell
+def _(holdings):
+    def count_shares_print(portfolio):
+        total = 0
+        for symbol, shares, price in portfolio:
+            total += shares
+        print(total)
+
+    shares_result = count_shares_print(holdings)
+    shares_result
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    shares_result hold none adn count_shares_print has no return, so it returns None by default. The next cell cannot do arithmetic with `shares_result`, such as `shares_result / 2`, because there is no number there to work with, only `None`. We can fix this by using `return` instead of `print` in the function, so that the function actually gives back a value that can be used in further calculations.
     """)
     return
 
