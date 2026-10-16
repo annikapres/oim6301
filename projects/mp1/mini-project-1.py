@@ -341,6 +341,18 @@ def _(daily_demand):
     return
 
 
+@app.cell
+def _(arrived_list, ending_list, sold_list, starting_stock):
+    total_arrived = sum(arrived_list)
+    expected_ending = starting_stock + total_arrived - sum(sold_list)
+    actual_ending = ending_list[-1]
+
+    print(expected_ending)
+    print(actual_ending)
+    print(expected_ending == actual_ending)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
