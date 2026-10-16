@@ -75,6 +75,25 @@ def _(mo):
     return
 
 
+app._unparsable_cell(
+    r"""
+    patients = 
+    #wrap the following to a function 
+    bmi = 27
+    if bmi >= 30:
+        category = "Obese"
+    elif bmi >= 25:
+        category = "Overweight"
+    elif bmi >= 18.5:
+        category = "Normal"
+    else:
+        category = "Underweight"
+    print(category)
+    """,
+    name="_"
+)
+
+
 @app.function
 def add_tax(amount):
     return round(amount * 1.0625, 2)
