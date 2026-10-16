@@ -203,6 +203,27 @@ def _(
     sold_list,
     starting_list,
 ):
+    print(f"{'Day':>4} {'Start':>6} {'Arrived':>8} {'Demand':>7} {'Sold':>5} {'Lost':>5} {'End':>5} {'Ordered':>8}")
+    for x in range(len(daily_demand)):
+        print(
+            f"{x+1:>4} {starting_list[x]:>6} {arrived_list[x]:>8} "
+            f"{demand_list[x]:>7} {sold_list[x]:>5} {lost_list[x]:>5} "
+            f"{ending_list[x]:>5} {ordered_list[x]:>8}"
+        )
+    return
+
+
+@app.cell
+def _(
+    arrived_list,
+    daily_demand,
+    demand_list,
+    ending_list,
+    lost_list,
+    ordered_list,
+    sold_list,
+    starting_list,
+):
     import pandas as pd
 
     table_40 = pd.DataFrame({
@@ -296,7 +317,31 @@ def _(
     })
 
     table_reorder_compare
-    return summary_avg_ending, summary_units_lost
+    return (
+        summary_avg_ending,
+        summary_lost_days,
+        summary_orders_placed,
+        summary_points,
+        summary_units_lost,
+    )
+
+
+@app.cell
+def _(
+    summary_avg_ending,
+    summary_lost_days,
+    summary_orders_placed,
+    summary_points,
+    summary_units_lost,
+):
+    print(f"{'Reorder Point':>15} {'Units Lost':>12} {'Lost Days':>11} {'Orders':>8} {'Avg Ending':>12}")
+    for j in range(len(summary_points)):
+        print(
+            f"{summary_points[j]:>15} {summary_units_lost[j]:>12} "
+            f"{summary_lost_days[j]:>11} {summary_orders_placed[j]:>8} "
+            f"{summary_avg_ending[j]:>12.1f}"
+        )
+    return
 
 
 @app.cell
