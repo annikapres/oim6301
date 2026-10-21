@@ -779,7 +779,6 @@ def _(requests):
         timeout=10,
     )
     board_reply.status_code, board_reply.json()
-
     return
 
 
@@ -788,6 +787,11 @@ def _(mo):
     mo.md(r"""
     > **Advanced · G · Take it down.** `requests.delete` on the same address, with the same header, removes your line. Run it twice and compare the two replies.
     """)
+    return
+
+
+@app.cell
+def _():
     return
 
 
