@@ -11,6 +11,15 @@ def _():
     return (mo,)
 
 
+@app.cell
+def _():
+    import requests
+    import json
+    import csv
+
+    return (requests,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -64,18 +73,119 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    3. Inputs. Every input in one cell.
+    """)
+    return
+
+
 @app.cell
 def _():
     county = "Middlesex"
     budget_dollars = 700000
     tax_limit_dollars = 8000
     fiscal_year = 2026
+    return budget_dollars, county, fiscal_year, tax_limit_dollars
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    4. The Work. Your functions, and the code that uses them.
+
+    A couple is looking for a single-family home in Middlesex County with a budget of $700,000, and they want to keep the property tax bill under $8,000 a year. They want a short list of towns where the average home fits the budget and the average bill fits the limit, cheapest bill first, and they want to rerun it for another county or another budget.
+
+    The data is the course API's Massachusetts endpoints, built from the state's Division of Local Services: oim.zhili.dev/ma lists them, and oim.zhili.dev/docs describes every field.
+
+    The main task
+
+    - Every town in the county, from /ma/towns?county=.... The reply's pagination reports how many towns there are; make sure you have all of them.
+    - For each town, its figures for fiscal_year from /ma/towns/{dor_code}/history. Compare every town for the same year.
+    - A table of the towns that pass both limits, cheapest bill first: town, average home value, residential tax rate, and average bill.
+    - One sentence that answers the couple, with the numbers in it.
+    - You may need the params= argument of requests.get. A page holds 50 towns unless you ask for more, up to 100.
+    """)
     return
 
 
 @app.cell
-def _():
+def _(county, requests):
+    response = requests.get(
+        "https://oim.zhili.dev/ma/towns",
+        params={"county": county, "per_page": 100},
+    )
+    data = response.json()
+    data
+    return (data,)
+
+
+@app.cell
+def _(data):
+    pagination_total = data["pagination"]["total"]
     return
+
+
+@app.cell
+def _(requests):
+    _probe = requests.get(
+        "https://oim.zhili.dev/ma/towns/002/history",
+    )
+    _probe.json()
+    return
+
+
+@app.cell
+def _(data, fiscal_year, requests):
+    town_records = []
+    towns_without_year = 0
+
+    for town in data["items"]:
+        history_response = requests.get(
+            f"https://oim.zhili.dev/ma/towns/{town['dor_code']}/history"
+        )
+        history = history_response.json()
+
+        found_year = False
+        for year_record in history["years"]:
+            if year_record["fiscal_year"] == fiscal_year:
+                found_year = True
+                town_records.append({
+                    "name": town["name"],
+                    "average_value": year_record["average_single_family_value_dollars"],
+                    "tax_rate": year_record["residential_rate_per_thousand"],
+                    "average_bill": year_record["average_single_family_bill_dollars"],
+                })
+
+        if not found_year:
+            towns_without_year = towns_without_year + 1
+
+    town_records
+    return (town_records,)
+
+
+@app.cell
+def _(budget_dollars, tax_limit_dollars, town_records):
+    affordable_towns = []
+
+    for record in town_records:
+        if record["average_value"] <= budget_dollars and record["average_bill"] <= tax_limit_dollars:
+            affordable_towns.append(record)
+
+    affordable_towns.sort(key=lambda record: record["average_bill"])
+
+    affordable_towns
+    return
+
+
+app._unparsable_cell(
+    r"""
+    f'Of the {pagination_total} Middlesex towns, those meeting both limits are sorted cheapest bill first \u2014 
+    {affordable_towns[0]['name']} (${affordable_towns[0]['average_bill']:,}) and {affordable_towns[1]['name']} (${affordable_towns[1]['average_bill']:,}) are at the top, {affordable_towns[-2]['name']} (${affordable_towns[-2]['average_bill']:,}) and {affordable_towns[-1]['name']} (${affordable_towns[-1]['average_bill']:,}) near the bottom of the list.'
+    """,
+    name="_"
+)
 
 
 if __name__ == "__main__":
