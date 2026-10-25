@@ -25,6 +25,7 @@ def _():
 def _(mo):
     mo.md(r"""
     1. Who would use this, and what decision does it help them make? Two or three sentences, in words somebody outside this course would understand.
+    -
     """)
     return
 
@@ -41,6 +42,7 @@ def _(mo):
 def _(mo):
     mo.md(r"""
     2. My Plan Before AI. Before you ask your agent anything, open the API's address in your browser and read what comes back. Then write how you would solve it: the steps, in order, in plain words, in five lines or more. Then answer these:
+    -
 
     - Which functions will your tool need? For each, what goes in and what comes out?
 
@@ -78,6 +80,7 @@ def _(mo):
 def _(mo):
     mo.md(r"""
     3. Inputs. Every input in one cell.
+    -
     """)
     return
 
@@ -95,6 +98,7 @@ def _():
 def _(mo):
     mo.md(r"""
     4. The Work. Your functions, and the code that uses them.
+    -
 
     A couple is looking for a single-family home in Middlesex County with a budget of $700,000, and they want to keep the property tax bill under $8,000 a year. They want a short list of towns where the average home fits the budget and the average bill fits the limit, cheapest bill first, and they want to rerun it for another county or another budget.
 
@@ -183,7 +187,9 @@ def _(budget_dollars, tax_limit_dollars, town_records):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    The Answer. Your result table, printed with print and f-strings with the columns lined up, and one sentence that answers the question in section 1 with the numbers in it. Print the sentence from code with an f-string, so that it changes when the data does.
+    5. The Answer.
+    -
+    Your result table, printed with print and f-strings with the columns lined up, and one sentence that answers the question in section 1 with the numbers in it. Print the sentence from code with an f-string, so that it changes when the data does.
     """)
     return
 
@@ -211,7 +217,9 @@ def _(affordable_towns, pagination_total):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Going Further: Show how the bill has changed over 10 years for the three towns with the lowest bill on your list.
+    Going Further:
+    -
+    Show how the bill has changed over 10 years for the three towns with the lowest bill on your list.
     """)
     return
 
@@ -322,7 +330,9 @@ def _(bill_history, cheapest_three_names, fiscal_year):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    6. How I Know These Numbers Are Right. Reach at least one result a second way, in this notebook, and show that the two agree. Write a cell that gets the same number from other fields, or open the raw reply in your browser and find each number of one row of your table there. For instance: an average bill is close to the average value times the tax rate divided by 1,000; an order's total equals the sum of its lines; the number of records you collected equals the total the API reports. At least one of those checks runs as code, and shows both numbers.
+    6. How I Know These Numbers Are Right.
+    -
+    Reach at least one result a second way, in this notebook, and show that the two agree. Write a cell that gets the same number from other fields, or open the raw reply in your browser and find each number of one row of your table there. For instance: an average bill is close to the average value times the tax rate divided by 1,000; an order's total equals the sum of its lines; the number of records you collected equals the total the API reports. At least one of those checks runs as code, and shows both numbers.
     """)
     return
 
@@ -358,7 +368,9 @@ def _(affordable_towns):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    7. Working With the Agent. Pick one piece of AI output you did not accept as-is. What did it give you, what did you change, and how did you know? Point to the commit or the cell. If the agent got it right the first time: What did you do to verify that? Pointing to your check in section 6 is enough.
+    7. Working With the Agent.
+    -
+    Pick one piece of AI output you did not accept as-is. What did it give you, what did you change, and how did you know? Point to the commit or the cell. If the agent got it right the first time: What did you do to verify that? Pointing to your check in section 6 is enough.
     """)
     return
 
@@ -378,7 +390,9 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    8. Reading It Back. Pick two functions in your notebook that your agent wrote or helped write. For each, write in your own words what goes in, what comes out, and one line you had to ask about. Then choose one change to what the tool does, such as another county, another week or another rule. Changing one value in your Inputs cell is enough. Write what you expect to change in the answer. Commit with the message mp2: prediction, make the change, run it, and write what happened and whether it matched.
+    8. Reading It Back.
+    -
+    Pick two functions in your notebook that your agent wrote or helped write. For each, write in your own words what goes in, what comes out, and one line you had to ask about. Then choose one change to what the tool does, such as another county, another week or another rule. Changing one value in your Inputs cell is enough. Write what you expect to change in the answer. Commit with the message mp2: prediction, make the change, run it, and write what happened and whether it matched.
     """)
     return
 
@@ -416,7 +430,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    9. Going Further. What you tried past the main task, what you found, and where it is in the notebook.
+    EVERYTHING CHANGED! Even the going further. I changed the direct input of county from "Middlesex" to "Essex" . There are 34 towns instead of 54 with completely different list. The cheapest three towns in this county are Lawrence, Haverhill, and Lynn. The only thing is with the summary sentence, it still says Middlesex since that was written , not taken directly from the script's output using {}. I would need to update the summary to reflect Essex County instead.
     """)
     return
 
@@ -424,7 +438,9 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Time Spent. About how many hours this project took you outside class, as one number. It is not graded.
+    9. Going Further.
+    -
+    What you tried past the main task, what you found, and where it is in the notebook.
     """)
     return
 
@@ -432,7 +448,31 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    4ish hours broken up
+    Past the main task, I looked at how the bill has changed over time for the 3 cheapest towns on the affordable list.
+    - I pulled the 3 cheapest town names from affordable_towns and looked up their dor_codes (2 cells right after the Going Further heading).
+    - I then requested each town's full history and kept only fiscal years 2017 through 2026 (10 years), building the bill_history list and a bill_history_table (polars table).
+    - I made a line chart (bill_chart, using altair) showing each town's average bill by fiscal year, one line per town. Since Malden and Walden towns had only 3 years listed, I only chose from 2022-2026.
+    - I then compared each town's bill 4 years ago to its current bill, 2026, printing the dollar and percent change for each town.
+
+    What I found was that all three towns' bills rose over the 10-year window and over the most recent 3 years, with the percent increases differing by town. Walthams average bill rose the most out of the 3 towns, by 12.5%.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    10. Time Spent.
+    -
+    About how many hours this project took you outside class, as one number. It is not graded.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    4-5ish hours broken up
     """)
     return
 
