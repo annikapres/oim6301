@@ -375,5 +375,67 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    8. Reading It Back. Pick two functions in your notebook that your agent wrote or helped write. For each, write in your own words what goes in, what comes out, and one line you had to ask about. Then choose one change to what the tool does, such as another county, another week or another rule. Changing one value in your Inputs cell is enough. Write what you expect to change in the answer. Commit with the message mp2: prediction, make the change, run it, and write what happened and whether it matched.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    For cell 16, it is a for loop with f-string statements.
+    - What goes in are afforable_towns list of records with each record a dictionary with keys name, average_value, tax_rate, average_bill.
+    - What comes out is a formatted table showing each town's name, average value, tax rate, and average bill. The four values printed in two left-aligned columns.
+    - The line I had to ask about was what was the <15. This means that the columns are left-aligned. The columns line up even when the words are different lengths. If it is >, it is right aligned 15 spaces.
+
+    For cell 21, it is a for loop that returns a list of records(dictionaries)-one per town per year, for the 10 fiscal years from 2017-2026.
+    - What goes in are cheapest-three_codes(the towns for's codes) and fiscal_year (2017-2026)
+    - What comes out are the bill_history- the dictionaries one per town per year from 2017-2016 including the average_bill that year. If the year was missing a value, it was not included.
+    - A line I had to ask about was if _year_record["fiscal_year"] >= start_year and _year_record["fiscal_year"] <= fiscal_year: which is an if that keeps only years inside your 10-year window. Also the -9 at the beginning which has a range of 10.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ONE CHANGE TO THE TOOL:
+    - a different county- from Middlesex to Essex
+
+    What I expect to change:
+    - the pagination total will be different because there are a different amount of towns in different counties.
+    - it would also list towns in different orders for different values of tax rates and bills.
+    - The summary sentence would change too
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    9. Going Further. What you tried past the main task, what you found, and where it is in the notebook.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Time Spent. About how many hours this project took you outside class, as one number. It is not graded.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    4ish hours broken up
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
