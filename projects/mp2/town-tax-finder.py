@@ -16,9 +16,8 @@ def _():
     import requests
     import json
     import csv
-    import polars as pl
 
-    return pl, requests
+    return csv, requests
 
 
 @app.cell(hide_code=True)
@@ -171,6 +170,21 @@ def _(data, fiscal_year, requests):
 
 
 @app.cell
+def _(csv, town_records):
+    import os
+
+    data_folder = "projects/mp2/data"
+    os.makedirs(data_folder, exist_ok=True)
+
+    with open(f"{data_folder}/town_records.csv", "w", newline="") as _file:
+        _writer = csv.DictWriter(_file, fieldnames=["name", "average_value", "tax_rate", "average_bill"])
+        _writer.writeheader()
+        for _record in town_records:
+            _writer.writerow(_record)
+    return
+
+
+@app.cell
 def _(budget_dollars, tax_limit_dollars, town_records):
     affordable_towns = []
 
@@ -178,7 +192,16 @@ def _(budget_dollars, tax_limit_dollars, town_records):
         if record["average_value"] <= budget_dollars and record["average_bill"] <= tax_limit_dollars:
             affordable_towns.append(record)
 
-    affordable_towns.sort(key=lambda record: record["average_bill"])
+    # sort affordable_towns by average_bill, cheapest first
+    # for each position i, find the cheapest remaining record and swap it into place
+    for i in range(len(affordable_towns)):
+        cheapest_index = i
+        for j in range(i + 1, len(affordable_towns)):
+            if affordable_towns[j]["average_bill"] < affordable_towns[cheapest_index]["average_bill"]:
+                cheapest_index = j
+        temp = affordable_towns[i]
+        affordable_towns[i] = affordable_towns[cheapest_index]
+        affordable_towns[cheapest_index] = temp
 
     affordable_towns
     return (affordable_towns,)
@@ -208,9 +231,11 @@ def _(affordable_towns):
 
 
 @app.cell
-def _(affordable_towns, pagination_total):
-    f"Of the {pagination_total} Middlesex towns, those meeting both limits are sorted cheapest bill first \u2014 " \
-    f"{affordable_towns[0]['name']} (${affordable_towns[0]['average_bill']:,}) and {affordable_towns[1]['name']} (${affordable_towns[1]['average_bill']:,}) are at the top, {affordable_towns[-2]['name']} (${affordable_towns[-2]['average_bill']:,}) and {affordable_towns[-1]['name']} (${affordable_towns[-1]['average_bill']:,}) near the bottom of the list."
+def _(affordable_towns, county, pagination_total):
+    print(
+        f"Of the {pagination_total} {county} towns, those meeting both limits are sorted cheapest bill first \u2014 "
+        f"{affordable_towns[0]['name']} (${affordable_towns[0]['average_bill']:,}) and {affordable_towns[1]['name']} (${affordable_towns[1]['average_bill']:,}) are at the top, {affordable_towns[-2]['name']} (${affordable_towns[-2]['average_bill']:,}) and {affordable_towns[-1]['name']} (${affordable_towns[-1]['average_bill']:,}) near the bottom of the list."
+    )
     return
 
 
@@ -272,6 +297,13 @@ def _(cheapest_three_codes, fiscal_year, requests):
 
     bill_history
     return (bill_history,)
+
+
+@app.cell
+def _():
+    import polars as pl
+
+    return (pl,)
 
 
 @app.cell
