@@ -13,7 +13,7 @@
 
 import marimo
 
-__generated_with = "0.25.1"
+__generated_with = "0.24.2"
 app = marimo.App(width="medium", sql_output="polars")
 
 
@@ -100,7 +100,7 @@ def _(mo, pl, requests):
         town_rows = pl.DataFrame(_records).select(town_columns)
 
     county_rows.shape, town_rows.shape
-    return county_rows, town_rows
+    return
 
 
 @app.cell(hide_code=True)
@@ -130,7 +130,7 @@ def _(mo):
 
 
 @app.cell
-def _(county_rows, duckdb, mo, town_rows):
+def _(duckdb, mo):
     _file = mo.notebook_dir().parent / "data" / "ma-towns.duckdb"
     _file.parent.mkdir(exist_ok=True)
     _file.unlink(missing_ok=True)
@@ -149,7 +149,7 @@ def _(county_rows, duckdb, mo, town_rows):
         _con.execute("""
             CREATE TABLE towns (
                 name                               VARCHAR PRIMARY KEY,
-                county                             VARCHAR NOT NULL REFERENCES counties(name),
+                county                             VARCHAR NOT NULL REFERENCES counties(name), 
                 population                         INTEGER NOT NULL CHECK (population > 0),
                 income_per_capita_dollars          INTEGER,
                 average_single_family_bill_dollars INTEGER CHECK (average_single_family_bill_dollars >= 0)
@@ -395,7 +395,7 @@ def _(ask, mo, requests):
         _path.write_bytes(_reply.content)
     orders_file = _path.as_posix()
     ask(f"SELECT count(*) AS orders FROM '{orders_file}'")
-    return (orders_file,)
+    return
 
 
 @app.cell(hide_code=True)
