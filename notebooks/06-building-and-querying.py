@@ -219,19 +219,22 @@ def _(mo):
 
 
 @app.cell
-def _(mo):
-    #1. C
-    _df = mo.sql(
-        f"""
-        CREATE TABLE town_bills (
-            town_name					TEXT NOT NULL,
-            fiscal_year 				INTEGER NOT NULL, 
-            average_single_family_bill_dollars  INTEGER NOT NULL,
-            PRIMARY KEY (town_name, fiscal_year),
-            FOREIGN KEY (town_name) REFERENCES dor_code (NAME)
-        )
-        """
-    )
+def _(database, duckdb):
+    with duckdb.connect(database) as _con:
+        _con.execute("""
+            CREATE TABLE town_bills (
+                town_name                          TEXT    NOT NULL REFERENCES towns (name),
+                fiscal_year                        INTEGER NOT NULL,
+                average_single_family_bill_dollars INTEGER NOT NULL,
+                PRIMARY KEY (town_name, fiscal_year)
+            )
+        """)
+        _con.execute("""
+            INSERT INTO town_bills (town_name, fiscal_year, average_single_family_bill_dollars)
+            VALUES
+                ('Wellesley', 2025, 19792),
+                ('Wellesley', 2026, 20551)
+        """)
     return
 
 
@@ -268,6 +271,39 @@ def _(mo):
 
     **Going further.** Find a rule the scenario of your database project states that a constraint cannot hold, and write the query that checks it instead.
     """)
+    return
+
+
+@app.cell
+def _(database, duckdb):
+    try:
+        with duckdb.connect(database) as _con:
+            _con.execute(
+                "INSERT INTO towns VALUES ('Wellesley', 'Norfolk', 1000, 0, 0)"
+            )
+        duplicate_name_message = "accepted"
+    except duckdb.ConstraintException as _error:
+        duplicate_name_message = str(_error).splitlines()[0]
+
+    try:
+        with duckdb.connect(database) as _con:
+            _con.execute(
+                "INSERT INTO towns VALUES ('Zerotown', 'Norfolk', 0, 0, 0)"
+            )
+        zero_population_message = "accepted"
+    except duckdb.ConstraintException as _error:
+        zero_population_message = str(_error).splitlines()[0]
+
+    try:
+        with duckdb.connect(database) as _con:
+            _con.execute(
+                "INSERT INTO towns VALUES ('Nowhereville', 'Atlantis', 1000, 0, 0)"
+            )
+        bad_county_message = "accepted"
+    except duckdb.ConstraintException as _error:
+        bad_county_message = str(_error).splitlines()[0]
+
+    [duplicate_name_message, zero_population_message, bad_county_message]
     return
 
 
