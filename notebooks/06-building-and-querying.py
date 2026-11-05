@@ -218,6 +218,23 @@ def _(mo):
     return
 
 
+@app.cell
+def _(mo):
+    #1. C
+    _df = mo.sql(
+        f"""
+        CREATE TABLE town_bills (
+            town_name					TEXT NOT NULL,
+            fiscal_year 				INTEGER NOT NULL, 
+            average_single_family_bill_dollars  INTEGER NOT NULL,
+            PRIMARY KEY (town_name, fiscal_year),
+            FOREIGN KEY (town_name) REFERENCES dor_code (NAME)
+        )
+        """
+    )
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
