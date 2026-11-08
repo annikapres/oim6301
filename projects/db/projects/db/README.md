@@ -116,4 +116,23 @@ order_line: one row is one product on one order, with how many were bought and t
 line_option: one row is one option added to one order line, with the price charged for it that day, applied to every unit on the line.
 payment: one row is one payment toward one order, with how it was paid (cash, card, app or points) and the amount in dollars.
 
-4. 
+4. Design choices
+
+Keys where the business already had one. The café already had two natural identifiers for a member, the mobile number and the email. I did not use either as the primary key. The scenario says a member can change their mobile number, and a primary key that changes has to be changed in every order that points at it. The email is optional, so some members would have no key at all. Each member gets their own member_id instead, and mobile and email are both UNIQUE, so two members can't share one (several members with no email are still allowed). Products and options have names, but a name can be reworded, so they get their own ids as well and name is UNIQUE. The one key made from business columns is line_option, where (line_id, option_id) is the primary key because it is exactly the rule "an option appears at most once on a line".
+
+Optional relationships.
+
+An order does not have to have a member: the scenario says customers who are not members buy too, and their orders name no customer. So orders.member_id can be empty.
+A member does not have to have orders: question 5 asks for members who joined and have never ordered.
+A product does not have to be on any line: question 7 asks for products that have not sold.
+An order line does not have to carry options, and an option does not have to be on any line: question 8 counts a line with no options as zero.
+An order is drawn as having zero or many payments. The scenario only says it can be paid in more than one payment, so this one is my choice: question 4 has to be able to find orders whose payments don't match the total, and an order with no payment at all is the clearest mismatch.
+Not optional: an order line must have one order and one product, an option on a line must have one line, and an order must have at least one line.
+
+Rules the tables cannot hold.
+
+An order's payments add up to the order's total. The total is the lines plus their options, and the payments are in another table, so no CHECK can see both. I will check it with a query (question 4) that totals the lines and their options for each order and totals the payments for each order, each in its own subquery, then compares the two and lists the orders that differ. They have to be totalled separately first, because joining lines to payments directly would repeat every line once per payment.
+An order has at least one line. A foreign key says a line must point at an order, not that an order must have a line. I will check it with a query for orders that have no line.
+Everything else is held by the tables: quantity > 0 and amount > 0 and price >= cost by CHECK, the four payment methods by a CHECK ... IN, and "once per line" by the line_option key.
+
+One thing I changed or checked. I checked that options are on the order line and not on the order or the product. The first thing I looked for in the ERD was line_option joining order_line to menu_option, so the same option can appear on many lines and a line can carry several options. I also checked that the price charged that day is stored on both order_line and line_option, so a later change to the menu price can't change old revenue.
