@@ -231,12 +231,12 @@ def _(mo):
 @app.cell
 def _(ask, towns_database):
     ask(towns_database, """
-        SELECT c.name
+        SELECT c.name, t.name, t.average_single_family_bill_dollars
         FROM counties AS c
         LEFT JOIN towns AS t
             ON t.county = c.name AND t.average_single_family_bill_dollars > 15000
-        WHERE t.name IS NULL
-        ORDER BY c.name
+        --WHERE t.name IS NULL
+        ORDER BY t.average_single_family_bill_dollars DESC
     """)
     return
 
@@ -394,6 +394,36 @@ def _(mo):
     *Check yourself: Beverages first, with about 13,375,939, and all eight, added before rounding, give 63,856,337.63.*
 
     **Going further.** Compute revenue by category for each year, and find the category that grew the most.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    A manager asks:
+    How many products did each supplier provide?
+    """)
+    return
+
+
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT SupplierID, count(*) AS products
+        FROM products
+        GROUP BY SupplierID
+        ORDER BY products DESC
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Each of the 29 suppliers provides between 1 and 5 products; suppliers 7 and 12 provide the most, 5 each. I read "how many products did each supplier provide" as asking for one row per supplier with a count, so I grouped by SupplierID and used count(*) to count the rows of products in each group — there's no ambiguity here since every row of products is one product with exactly one SupplierID.
+
+    Concepts used: a table, GROUP BY, count(*), AS, ORDER BY.
     """)
     return
 
