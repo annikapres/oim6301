@@ -136,12 +136,17 @@ def _(database, duckdb, mo):
 
         _con.execute("""
             CREATE VIEW weekly_category_revenue AS
-            WITH line_sales AS (
+                        WITH as_of_date AS (
+                                SELECT CAST(MAX(ordered_at) AS DATE) AS as_of
+                                FROM orders
+                        ), line_sales AS (
                 SELECT p.category, SUM(ol.quantity * ol.price_charged) AS revenue
                 FROM orders AS o
                 JOIN order_lines AS ol ON ol.order_id = o.order_id
                 JOIN products AS p ON p.product_id = ol.product_id
-                WHERE o.ordered_at >= CURRENT_DATE - INTERVAL '7 days'
+                                CROSS JOIN as_of_date AS d
+                                WHERE o.ordered_at >= d.as_of - INTERVAL '6 days'
+                                    AND o.ordered_at < d.as_of + INTERVAL '1 day'
                 GROUP BY p.category
                 UNION ALL
                 SELECT p.category, SUM(ol.quantity * lo.price_charged) AS revenue
@@ -149,7 +154,9 @@ def _(database, duckdb, mo):
                 JOIN order_lines AS ol ON ol.order_id = o.order_id
                 JOIN products AS p ON p.product_id = ol.product_id
                 JOIN line_options AS lo ON lo.line_id = ol.line_id
-                WHERE o.ordered_at >= CURRENT_DATE - INTERVAL '7 days'
+                                CROSS JOIN as_of_date AS d
+                                WHERE o.ordered_at >= d.as_of - INTERVAL '6 days'
+                                    AND o.ordered_at < d.as_of + INTERVAL '1 day'
                 GROUP BY p.category
             )
             SELECT category, SUM(revenue) AS revenue
