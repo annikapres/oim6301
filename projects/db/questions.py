@@ -437,6 +437,22 @@ def _(mo, result_q6):
     return
 
 
+@app.cell
+def _(result_q6):
+    import polars as pl
+
+    import altair as alt
+    import matplotlib.pyplot as plt
+
+    _months = [month.strftime("%b %Y") for month in result_q6["month"].to_list()]
+    _shares = [float(share) for share in result_q6["share_percent"].to_list()]
+    _figure, _axes = plt.subplots()
+    _axes.bar(_months, _shares)
+    _axes.set_xlabel("Month")
+    _axes.set_ylabel("Orders paid with points (%)")
+    _axes.tick_params(axis="x", labelrotation=45)
+    _figure.tight_layout()
+    _figure
 @app.cell(hide_code=True)
 def _(as_of, day_after_as_of, last_60_start, mo):
     sql_q7 = f"""
@@ -462,25 +478,6 @@ def _(as_of, day_after_as_of, last_60_start, mo):
     ```
     """)
     return (sql_q7,)
-
-
-@app.cell
-def _(ask, sql_q7):
-    result_q7 = ask(sql_q7)
-    result_q7
-    return (result_q7,)
-
-
-@app.cell(hide_code=True)
-def _(mo, result_q7):
-    _unsold_names = []
-    for _row in result_q7.iter_rows(named=True):
-        _unsold_names.append(_row["name"])
-    mo.md(
-        f"{result_q7.height} products had no sales in that period: "
-        f"{', '.join(_unsold_names) if _unsold_names else 'none'}."
-    )
-    return
 
 
 @app.cell(hide_code=True)
@@ -808,7 +805,11 @@ def _(mo, result_q10):
         f"slightly higher at ${float(_higher_channel['average_order_total']):,.3f} "
         f"versus ${float(_lower_channel['average_order_total']):,.3f} for app. "
         f"The query and both channel totals are shown in question 10 "
-        f"({_channel_count} channels)."
+        f"({_channel_count} channels). I also made question 6 easier to compare "
+        "over time with a bar chart of the monthly share of orders paid at "
+        "least partly with points. Its axes are labeled Month and Orders paid "
+        "with points (%), and the tooltips show the order counts behind each "
+        "percentage."
     )
     return
 
