@@ -798,22 +798,15 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(mo, result_q10):
-    _channel_count = result_q10.height
-    _higher_channel = result_q10.row(0, named=True)
-    _lower_channel = result_q10.row(result_q10.height - 1, named=True)
-    mo.md(
-        f"I compared the app and counter channels by average check, a staffing "
-        f"and channel-planning question not on the original list. Counter was "
-        f"slightly higher at ${float(_higher_channel['average_order_total']):,.3f} "
-        f"versus ${float(_lower_channel['average_order_total']):,.3f} for app. "
-        f"The query and both channel totals are shown in question 10 "
-        f"({_channel_count} channels). I also made question 6 easier to compare "
-        "over time with a bar chart of the monthly share of orders paid at "
-        "least partly with points. Its axes are labeled Month and Orders paid "
-        "with points (%), and the tooltips show the order counts behind each "
-        "percentage."
-    )
+def _(mo):
+    mo.md("""
+    Question 6 of the original 10 asks for the monthly share of orders "
+        "paid at least partly with points. I went one step further by turning "
+        "those same results into a bar chart, so the month-to-month pattern is "
+        "easier to compare than in the table alone. The chart does not change "
+        "the query or its results. Its axes are labeled Month and Orders paid "
+        "with points (%).
+    """)
     return
 
 
