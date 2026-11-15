@@ -453,6 +453,9 @@ def _(result_q6):
     _axes.tick_params(axis="x", labelrotation=45)
     _figure.tight_layout()
     _figure
+    return
+
+
 @app.cell(hide_code=True)
 def _(as_of, day_after_as_of, last_60_start, mo):
     sql_q7 = f"""
@@ -477,7 +480,7 @@ def _(as_of, day_after_as_of, last_60_start, mo):
     {sql_q7.strip()}
     ```
     """)
-    return (sql_q7,)
+    return
 
 
 @app.cell(hide_code=True)
