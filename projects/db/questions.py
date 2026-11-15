@@ -41,7 +41,7 @@ def _(duckdb, mo):
         with duckdb.connect(database, read_only=True) as _con:
             return _con.sql(sql).pl()
 
-    return ask, database
+    return (ask,)
 
 
 @app.cell(hide_code=True)
@@ -231,7 +231,7 @@ def _(ask, mo, sql_q3):
 
 
 @app.cell(hide_code=True)
-def _(ask, mo, period_start, result_q3, as_of):
+def _(as_of, ask, mo, period_start, result_q3):
     average_all_members = ask(f"""
         WITH item_totals AS (
             SELECT ol.order_id, SUM(ol.quantity * ol.price_charged) AS amount
@@ -269,7 +269,7 @@ def _(ask, mo, period_start, result_q3, as_of):
         f"of ${_above_average:,.2f}; their order counts, total spending, and "
         "average order are shown in the table."
     )
-    return (average_all_members,)
+    return
 
 
 @app.cell(hide_code=True)
@@ -652,7 +652,9 @@ def _(mo, result_q10):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## 1. How I Know These Numbers Are Right")
+    mo.md("""
+    ## 1. How I Know These Numbers Are Right
+    """)
     return
 
 
@@ -677,12 +679,14 @@ def _(ask, result_q2):
     assert category_revenue_total == independent_revenue_total
     print(f"Category answer revenue: ${category_revenue_total:,.2f}")
     print(f"Independent lines plus options: ${independent_revenue_total:,.2f}")
-    return independent_revenue_total, category_revenue_total
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("The two totals agree. The assertion fails if the category query omits or double-counts revenue.")
+    mo.md("""
+    The two totals agree. The assertion fails if the category query omits or double-counts revenue.
+    """)
     return
 
 
@@ -693,18 +697,22 @@ def _(result_q4):
     assert mismatch_ids == expected_mismatch_ids
     print(f"Query mismatch count: {len(mismatch_ids)}")
     print(f"Expected deliberate exceptions: {len(expected_mismatch_ids)}")
-    return expected_mismatch_ids, mismatch_ids
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md("The mismatches are order 1 (no payment) and order 2 ($1.00 short), exactly the two deliberate exceptions recorded in Part A.")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## 2. Working With the Agent")
+    mo.md("""
+    The mismatches are order 1 (no payment) and order 2 ($1.00 short), exactly the two deliberate exceptions recorded in Part A.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md("""
+    ## 2. Working With the Agent
+    """)
     return
 
 
@@ -720,7 +728,9 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## 3. Reading It Back")
+    mo.md("""
+    ## 3. Reading It Back
+    """)
     return
 
 
@@ -735,7 +745,7 @@ def _(as_of, mo):
 
 
 @app.cell(hide_code=True)
-def _(as_of, ask, day_after_as_of, mo, period_start):
+def _(ask, day_after_as_of, mo, period_start):
     sql_join_check = f"""
     SELECT COUNT(*) AS joined_rows,
         (SELECT COUNT(*) FROM order_lines) AS order_line_rows
@@ -755,7 +765,7 @@ def _(as_of, ask, day_after_as_of, mo, period_start):
     {sql_join_check.strip()}
     ```
     """)
-    return join_count_result, sql_join_check
+    return (join_count_result,)
 
 
 @app.cell
@@ -776,12 +786,14 @@ def _(as_of, join_count_result, mo):
         f"category's combined product-and-option revenue, cost, and margin "
         f"through {as_of}."
     )
-    return joined_rows, order_line_rows
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## 4. Going Further")
+    mo.md("""
+    ## 4. Going Further
+    """)
     return
 
 
@@ -803,13 +815,17 @@ def _(mo, result_q10):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## 5. Time Spent")
+    mo.md("""
+    ## 5. Time Spent
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("**Time Spent:** ___ hours")
+    mo.md("""
+    **Time Spent:** 5-6 hours
+    """)
     return
 
 
