@@ -828,7 +828,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    **Time Spent:** 5-6 hours
+    **Time Spent:** 5-6 hours in total
     """)
     return
 
