@@ -511,7 +511,14 @@ def _(mo):
 @app.cell
 def _(mo, os, pl):
     import sys
-    from dotenv import load_dotenv
+    import subprocess
+
+    try:
+        from dotenv import load_dotenv
+    except ModuleNotFoundError:
+        subprocess.run([sys.executable, "-m", "pip", "install", "python-dotenv"], check=True)
+        from dotenv import load_dotenv
+
     import pymssql
 
     def ask_server(sql):
