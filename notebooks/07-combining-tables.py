@@ -322,6 +322,11 @@ def _(ask, northwind_database):
     return
 
 
+@app.cell
+def _():
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -423,6 +428,17 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT ShipCountry, sum(Freight) AS total_freight
+        FROM orders
+        GROUP BY ShipCountry
+        ORDER BY total_freight DESC
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -466,7 +482,7 @@ def _(ask, northwind_database):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Each of the 29 suppliers provides between 1 and 5 products; suppliers 7 and 12 provide the most, 5 each. I read "how many products did each supplier provide" as asking for one row per supplier with a count, so I grouped by SupplierID and used count(*) to count the rows of products in each group — there's no ambiguity here since every row of products is one product with exactly one SupplierID.
+    Each of the 29 suppliers provides between 1 and 5 products; suppliers 7 and 12 provide the most, 5 each. I read "how many products did each supplier provide" as asking for one row per supplier with a count, so I grouped by SupplierID and used count(*) to count the rows of products in each group — there's no ambiguity here since every row of products is one product with exactly one SupplierID. - Individual, unique product count, not total product sold.
 
     Concepts used: a table, GROUP BY, count(*), AS, ORDER BY.
     """)
@@ -494,8 +510,9 @@ def _(mo):
 
 @app.cell
 def _(mo, os, pl):
-    import pymssql
+    import sys
     from dotenv import load_dotenv
+    import pymssql
 
     def ask_server(sql):
         root = mo.notebook_dir().parent
