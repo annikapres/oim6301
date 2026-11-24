@@ -216,6 +216,40 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask, towns_database):
+    ask(towns_database, """
+        SELECT t.name, t.county, t.population, c.population AS county_population
+        FROM towns AS t
+        JOIN counties AS c ON t.county = c.name
+        ORDER BY t.population DESC
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The query returns 351 rows, the same as the number of rows in towns. Each town names exactly one county, and each county name appears exactly once in counties. So every town finds exactly one matching county row. No town is dropped, because every county it names exists, and none is duplicated, because there is only one match.
+
+    Nantucket is both a town and a county. Nantucket County covers exactly the same territory as the town of Nantucket, so the town's population and the county's population are the same number. Dividing a number by itself gives 1, which is 100.0 percent.
+    """)
+    return
+
+
+@app.cell
+def _(ask, towns_database):
+    ask(towns_database, """
+        SELECT t.name, t.county, t.population, c.population AS county_population,
+               round(100.0 * t.population / c.population, 1) AS county_share_percent
+        FROM towns AS t
+        JOIN counties AS c ON t.county = c.name
+        ORDER BY county_share_percent DESC
+        LIMIT 5
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
