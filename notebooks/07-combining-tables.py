@@ -311,6 +311,17 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT t.TerritoryID, t.TerritoryDescription
+        FROM territories AS t
+        LEFT JOIN employee_territories AS et ON et.TerritoryID = t.TerritoryID
+        WHERE et.TerritoryID IS NULL
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
