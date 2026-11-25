@@ -510,16 +510,8 @@ def _(mo):
 
 @app.cell
 def _(mo, os, pl):
-    import sys
-    import subprocess
-
-    try:
-        from dotenv import load_dotenv
-    except ModuleNotFoundError:
-        subprocess.run([sys.executable, "-m", "pip", "install", "python-dotenv"], check=True)
-        from dotenv import load_dotenv
-
     import pymssql
+    from dotenv import load_dotenv
 
     def ask_server(sql):
         root = mo.notebook_dir().parent
