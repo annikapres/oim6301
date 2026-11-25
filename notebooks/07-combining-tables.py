@@ -534,7 +534,7 @@ def _(mo, os, pl):
             return pl.DataFrame(_cursor.fetchall(), schema=_columns, orient="row")
 
     ask_server("SELECT TOP 5 SalesOrderID, OrderDate, Freight FROM Sales.SalesOrderHeader ORDER BY SalesOrderID")
-    return
+    return (ask_server,)
 
 
 @app.cell(hide_code=True)
@@ -561,12 +561,43 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT
+            (SELECT COUNT(*) FROM Sales.SalesOrderHeader) AS orders,
+            (SELECT COUNT(*) FROM Sales.SalesOrderDetail) AS order_lines,
+            (SELECT COUNT(*)
+             FROM Sales.SalesOrderHeader AS h
+             JOIN Sales.SalesOrderDetail AS d ON d.SalesOrderID = h.SalesOrderID) AS joined
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    The join has exactly as many rows as `Sales.SalesOrderDetail`, 121,317. Each row of `SalesOrderDetail` is one order line, and it names exactly one `SalesOrderID`, which matches exactly one row of `SalesOrderHeader`. So joining adds one header row onto each line, without dropping or duplicating any line. This is the same pattern as `orders` and `order_details` in Northwind: the table with one row per line sets the count.
+    """)
+    return
+
+
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT
+            (SELECT SUM(Freight) FROM Sales.SalesOrderHeader) AS freight,
+            (SELECT SUM(h.Freight)
+             FROM Sales.SalesOrderHeader AS h
+             JOIN Sales.SalesOrderDetail AS d ON d.SalesOrderID = h.SalesOrderID) AS freight_after_the_join
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # 6. Practice for the Database Project
-
-    The questions in Part B of the [database project](https://oim6301.github.io/assignments/database-project/) use a few patterns that the sections above do not show on their own. The exercises below practice them on Northwind, and each one names the project questions that are like it.
+    The total from `Sales.SalesOrderHeader` is 3,183,430.25. After the join, it is 78,690,398.20, about 24,688 times as much.
     """)
     return
 
@@ -578,13 +609,21 @@ def _(mo):
 
     For each territory, count the employees who cover it, and keep the territories that nobody covers in the result, with 0.
 
-    A common error is to count with `count(*)`. After a `LEFT JOIN`, a territory with no match still has one row, so `count(*)` gives it 1. Count a column from `employee_territories` instead, because `count` skips `NULL`.
+    Count a column from `employee_territories` instead of `count(*)`. `count(*)` would give a territory with no match 1, but `COUNT(et.EmployeeID)` skips `NULL` and gives 0.
+    """)
+    return
 
-    *Check yourself: 53 rows. Four of them have 0, and the counts add up to 49, the number of rows in `employee_territories`.*
 
-    **In the project:** like scenario B's question 2 and scenario D's question 4.
-
-    **Going further.** For each region, the number of territories and the number of them that somebody covers.
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT t.TerritoryID, t.TerritoryDescription,
+               COUNT(et.EmployeeID) AS employees
+        FROM territories AS t
+        LEFT JOIN employee_territories AS et
+            ON et.TerritoryID = t.TerritoryID
+        GROUP BY t.TerritoryID, t.TerritoryDescription
+        ORDER BY t.TerritoryDescription
     """)
     return
 
@@ -594,13 +633,39 @@ def _(mo):
     mo.md(r"""
     ## ✏️ G · Orders and Territories for Each Employee
 
-    Build one row per employee with their number of orders and their number of territories. Then check each count against counting it on its own, from `orders` alone and from `employee_territories` alone.
+    This query counts orders and territories in separate subqueries. It joins the counts to `employees`, so a join does not repeat an employee's orders for each of their territories.
+    """)
+    return
 
-    *Check yourself: Robert has 1,789 orders and 10 territories. If you join both tables to `employees` in one query and count the rows, Robert gets 17,890, one row for each pair of an order and a territory.*
 
-    **In the project:** like scenario A's question 6 and scenario D's question 6, and the note under scenario C's questions.
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        WITH employee_orders AS (
+            SELECT EmployeeID, COUNT(*) AS orders
+            FROM orders
+            GROUP BY EmployeeID
+        ), employee_territory_counts AS (
+            SELECT EmployeeID, COUNT(*) AS territories
+            FROM employee_territories
+            GROUP BY EmployeeID
+        )
+        SELECT e.EmployeeID, e.FirstName, e.LastName,
+               o.orders, t.territories
+        FROM employees AS e
+        LEFT JOIN employee_orders AS o
+            ON o.EmployeeID = e.EmployeeID
+        LEFT JOIN employee_territory_counts AS t
+            ON t.EmployeeID = e.EmployeeID
+        ORDER BY e.EmployeeID
+    """)
+    return
 
-    **Going further.** Add each employee's total freight, and check it against `orders` alone.
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Robert is employee 7. His row has 1,789 orders and 10 territories.
     """)
     return
 
@@ -610,13 +675,30 @@ def _(mo):
     mo.md(r"""
     ## ✏️ H · The Last 90 Days
 
-    The last order in Northwind was placed on 2023-10-28. For each shipper, compute the number of orders and the total freight in the 90 days before that date, with the most orders first. In `orders`, the shipper is `ShipVia`, which holds a `ShipperID`. To keep the orders of those 90 days, use `WHERE OrderDate >= DATE '2023-10-28' - INTERVAL 90 DAY`. [Chapter B, §12](https://oim6301.github.io/handbooks/sql/02-asking-one-table/#12-dates-truncating-differencing-grouping-by-month) of the SQL handbook has more on dates.
+    This query keeps orders from the 90 days ending on 2023-10-28, joins them to shippers, and totals the orders and freight by shipper.
+    """)
+    return
 
-    *Check yourself: 328 orders in all, and United Package first, with 115 orders and 31,827.75 in freight.*
 
-    **In the project:** like scenario A's question 4, scenario B's question 1 and scenario C's question 7.
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT s.CompanyName,
+               COUNT(o.OrderID) AS orders,
+               round(SUM(o.Freight), 2) AS freight
+        FROM shippers AS s
+        JOIN orders AS o ON o.ShipVia = s.ShipperID
+        WHERE o.OrderDate >= DATE '2023-10-28' - INTERVAL 90 DAY
+        GROUP BY s.ShipperID, s.CompanyName
+        ORDER BY orders DESC
+    """)
+    return
 
-    **Going further.** The number of orders for each shipper in each month of 2023.
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The three shippers have 328 orders altogether. United Package is first with 115 orders and 31,827.75 in freight.
     """)
     return
 
@@ -626,13 +708,29 @@ def _(mo):
     mo.md(r"""
     ## ✏️ I · Categories Above the Average
 
-    Compute the revenue of each category, then keep only the categories whose revenue is above the average of all the category totals. This needs a query inside another query, called a **subquery**, which [chapter C, §21](https://oim6301.github.io/handbooks/sql/03-more-than-one-table/#21-subqueries) of the SQL handbook explains.
+    The inner query calculates revenue for each category. The outer query keeps only categories whose revenue is greater than the average of all category revenues.
+    """)
+    return
 
-    *Check yourself: four categories, Beverages, Confections, Meat/Poultry and Dairy Products. The average is about 56,048,329.*
 
-    **In the project:** like scenario A's question 4 and scenario C's question 3.
-
-    **Going further.** The products whose revenue is above the average of their own category.
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        WITH category_revenue AS (
+            SELECT c.CategoryID, c.CategoryName,
+                   SUM(d.UnitPrice * d.Quantity * (1 - d.Discount)) AS revenue
+            FROM order_details AS d
+            JOIN products AS p ON p.ProductID = d.ProductID
+            JOIN categories AS c ON c.CategoryID = p.CategoryID
+            GROUP BY c.CategoryID, c.CategoryName
+        )
+        SELECT CategoryName, round(revenue, 2) AS revenue
+        FROM category_revenue
+        WHERE revenue > (
+            SELECT AVG(revenue)
+            FROM category_revenue
+        )
+        ORDER BY revenue DESC
     """)
     return
 
